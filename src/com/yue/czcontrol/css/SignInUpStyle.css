@@ -1,0 +1,25 @@
+.pane{
+    -fx-background-color: #272727;
+}
+.subPan{
+    -fx-background-color: #000000;
+}
+
+.loginPane{
+    -fx-background-color: #9C2B27;
+}
+
+.input{
+    -fx-background-color: #9C2B27;
+    -fx-text-fill: #FFFFFF;
+}
+
+.button{
+    -fx-background-color: #E45652;
+    -fx-text-fill: #FFFFFF;
+    -fx-background-radius: 12px;
+}
+
+.button:hover{
+    -fx-background-color: #2DB2AA;
+}

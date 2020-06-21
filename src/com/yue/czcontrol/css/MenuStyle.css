@@ -1,0 +1,16 @@
+.mainPane{
+    -fx-background-color: #8A2BE2;
+}
+
+.subPane{
+    -fx-background-color: #9370DB;
+}
+
+.button{
+    -fx-background-color: #8A2BE2;
+    -fx-text-fill: #FFFFFF;
+}
+
+.buttonbar{
+    -fx-background-color: #8A2BE2;
+}

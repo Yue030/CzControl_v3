@@ -1,0 +1,7 @@
+.pane{
+    -fx-background-color: #000000;
+}
+
+.label{
+    -fx-text-fill: #FFFFFF;
+}

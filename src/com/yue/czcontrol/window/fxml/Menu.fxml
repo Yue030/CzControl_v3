@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane fx:id="bp" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.yue.czcontrol.window.MenuController">
+   <left>
+      <AnchorPane prefHeight="600.0" prefWidth="173.0" styleClass="mainPane" stylesheets="@../../css/MenuStyle.css" BorderPane.alignment="CENTER">
+         <children>
+            <AnchorPane layoutY="-1.0" prefHeight="160.0" prefWidth="226.0" styleClass="subPane" stylesheets="@../../css/MenuStyle.css">
+               <children>
+                  <Label alignment="CENTER" contentDisplay="CENTER" layoutX="2.0" layoutY="43.0" prefHeight="47.0" prefWidth="222.0" text="Cz Control v3" textAlignment="CENTER">
+                     <font>
+                        <Font size="30.0" />
+                     </font>
+                  </Label>
+                  <Label contentDisplay="CENTER" layoutX="29.0" layoutY="90.0" prefHeight="20.0" prefWidth="167.0" text="Code By Yue 2020/6/18" textAlignment="CENTER">
+                     <font>
+                        <Font size="15.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="61.0" layoutY="118.0" text="Version v3-Beta" textAlignment="CENTER">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+               </children></AnchorPane>
+            <ButtonBar layoutX="13.0" layoutY="168.0" onMouseEntered="#fadeBar" prefHeight="40.0" prefWidth="200.0" styleClass="buttonbar" stylesheets="@../../css/MenuStyle.css">
+              <buttons>
+                <Button fx:id="mainBtn" mnemonicParsing="false" onAction="#change" prefHeight="23.0" prefWidth="155.0" stylesheets="@../../css/MenuStyle.css" text="Home" />
+                  <ImageView fitHeight="35.0" fitWidth="38.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../resource/home.png" />
+                     </image>
+                  </ImageView>
+              </buttons>
+            </ButtonBar>
+            <ButtonBar layoutX="13.0" layoutY="215.0" onMouseEntered="#fadeBar" prefHeight="40.0" prefWidth="200.0" styleClass="buttonbar" stylesheets="@../../css/MenuStyle.css">
+              <buttons>
+                <Button fx:id="memberListBtn" mnemonicParsing="false" onAction="#change" prefHeight="23.0" prefWidth="177.0" text="Member List" />
+                  <ImageView fitHeight="35.0" fitWidth="38.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../resource/memberList.png" />
+                     </image>
+                  </ImageView>
+              </buttons>
+            </ButtonBar>
+            <ButtonBar layoutX="13.0" layoutY="260.0" onMouseEntered="#fadeBar" prefHeight="40.0" prefWidth="200.0" styleClass="buttonbar" stylesheets="@../../css/MenuStyle.css">
+              <buttons>
+                <Button fx:id="addMemberBtn" mnemonicParsing="false" onAction="#change" prefHeight="23.0" prefWidth="188.0" text="Add Member" />
+                  <ImageView fitHeight="35.0" fitWidth="38.0" pickOnBounds="true" preserveRatio="true">
+                      <image>
+                          <Image url="@../../resource/add.png" />
+                      </image>
+                  </ImageView>
+              </buttons>
+            </ButtonBar>
+            <ButtonBar layoutX="13.0" layoutY="313.0" onMouseEntered="#fadeBar" prefHeight="40.0" prefWidth="200.0" styleClass="buttonbar" stylesheets="@../../css/MenuStyle.css">
+              <buttons>
+                <Button fx:id="deleteMemberBtn" mnemonicParsing="false" onAction="#change" prefHeight="23.0" prefWidth="189.0" text="Delete Member" />
+                  <ImageView fitHeight="35.0" fitWidth="38.0" pickOnBounds="true" preserveRatio="true">
+                      <image>
+                          <Image url="@../../resource/delete.png" />
+                      </image>
+                  </ImageView>
+              </buttons>
+            </ButtonBar>
+            <ButtonBar layoutX="13.0" layoutY="366.0" onMouseEntered="#fadeBar" prefHeight="40.0" prefWidth="200.0" styleClass="buttonbar" stylesheets="@../../css/MenuStyle.css">
+              <buttons>
+                <Button fx:id="editMemberBtn" mnemonicParsing="false" onAction="#change" prefHeight="23.0" prefWidth="175.0" text="Edit Member" />
+                  <ImageView fitHeight="35.0" fitWidth="38.0" pickOnBounds="true" preserveRatio="true">
+                      <image>
+                          <Image url="@../../resource/edit.png" />
+                      </image>
+                  </ImageView>
+              </buttons>
+            </ButtonBar>
+            <ButtonBar layoutX="13.0" layoutY="414.0" onMouseEntered="#fadeBar" prefHeight="40.0" prefWidth="200.0" styleClass="buttonbar" stylesheets="@../../css/MenuStyle.css">
+              <buttons>
+                <Button fx:id="messageBtn" mnemonicParsing="false" onAction="#change" prefHeight="23.0" prefWidth="167.0" text="Messege" />
+                  <ImageView fitHeight="35.0" fitWidth="38.0" pickOnBounds="true" preserveRatio="true">
+                      <image>
+                          <Image url="@../../resource/message.png" />
+                      </image>
+                  </ImageView>
+              </buttons>
+            </ButtonBar>
+            <ButtonBar layoutX="13.0" layoutY="462.0" onMouseEntered="#fadeBar" prefHeight="40.0" prefWidth="200.0" styleClass="buttonbar" stylesheets="@../../css/MenuStyle.css">
+              <buttons>
+                <Button fx:id="leaveBtn" mnemonicParsing="false" onAction="#change" prefHeight="23.0" prefWidth="183.0" text="Leave" />
+                  <ImageView fitHeight="35.0" fitWidth="38.0" pickOnBounds="true" preserveRatio="true">
+                      <image>
+                          <Image url="@../../resource/leave.png" />
+                      </image>
+                  </ImageView>
+              </buttons>
+            </ButtonBar>
+            <ButtonBar layoutX="13.0" layoutY="516.0" onMouseEntered="#fadeBar" prefHeight="40.0" prefWidth="200.0" styleClass="buttonbar" stylesheets="@../../css/MenuStyle.css">
+              <buttons>
+                <Button fx:id="logoutBtn" mnemonicParsing="false" onAction="#change" prefHeight="23.0" prefWidth="249.0" text="Logout" />
+                  <ImageView fitHeight="35.0" fitWidth="38.0" pickOnBounds="true" preserveRatio="true">
+                      <image>
+                          <Image url="@../../resource/logout.png" />
+                      </image>
+                  </ImageView>
+              </buttons>
+            </ButtonBar>
+         </children></AnchorPane>
+   </left>
+</BorderPane>

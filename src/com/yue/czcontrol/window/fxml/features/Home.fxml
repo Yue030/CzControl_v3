@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="775.0" styleClass="pane" stylesheets="@../../../css/HomeStyle.css" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.yue.czcontrol.window.features.HomeController">
+   <children>
+      <Label alignment="CENTER" contentDisplay="CENTER" layoutX="68.0" layoutY="14.0" prefHeight="106.0" prefWidth="679.0" text="Welcome To CzControl v3" textAlignment="CENTER">
+         <font>
+            <Font name="Arial" size="50.0" />
+         </font>
+      </Label>
+      <Label fx:id="user" contentDisplay="CENTER" layoutX="109.0" layoutY="158.0" prefHeight="39.0" prefWidth="366.0" text="User:" textAlignment="CENTER">
+         <font>
+            <Font name="Arial" size="45.0" />
+         </font>
+      </Label>
+      <Label fx:id="version" layoutX="109.0" layoutY="271.0" prefHeight="58.0" prefWidth="679.0" text="Version:">
+         <font>
+            <Font size="45.0" />
+         </font>
+      </Label>
+      <Label layoutX="109.0" layoutY="488.0" text="----------2020/6/20 Code By Yue " textAlignment="CENTER">
+         <font>
+            <Font size="30.0" />
+         </font></Label>
+      <Label fx:id="time" layoutX="109.0" layoutY="381.0" text="Time: ">
+         <font>
+            <Font size="40.0" />
+         </font>
+      </Label>
+   </children>
+</AnchorPane>

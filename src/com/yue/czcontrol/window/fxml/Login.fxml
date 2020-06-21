@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="700.0" prefWidth="1400.0" styleClass="pane" stylesheets="@../../css/SignInUpStyle.css" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.yue.czcontrol.window.LoginController">
+   <children>
+      <Pane layoutX="759.0" layoutY="54.0" prefHeight="590.0" prefWidth="594.0" styleClass="loginPane" stylesheets="@../../css/SignInUpStyle.css">
+         <children>
+            <Separator layoutX="127.0" layoutY="197.0" prefHeight="3.0" prefWidth="357.0" />
+            <TextField fx:id="accountInput" layoutX="127.0" layoutY="133.0" prefHeight="55.0" prefWidth="357.0" promptText="Account" styleClass="input" stylesheets="@../../css/SignInUpStyle.css">
+               <font>
+                  <Font size="24.0" />
+               </font></TextField>
+            <Separator layoutX="127.0" layoutY="357.0" prefHeight="3.0" prefWidth="357.0" />
+            <PasswordField fx:id="passwordInput" layoutX="127.0" layoutY="295.0" prefHeight="55.0" prefWidth="357.0" promptText="Password" styleClass="input" stylesheets="@../../css/SignInUpStyle.css">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </PasswordField>
+            <Button fx:id="signInBtn" layoutX="127.0" layoutY="470.0" mnemonicParsing="false" onAction="#change" prefHeight="55.0" prefWidth="357.0" stylesheets="@../../css/SignInUpStyle.css" text="Sign In">
+               <font>
+                  <Font size="24.0" />
+               </font></Button>
+            <Label layoutX="217.0" layoutY="31.0" prefHeight="55.0" prefWidth="160.0" text="Sign In" textFill="WHITE">
+               <font>
+                  <Font name="Arial" size="48.0" />
+               </font>
+            </Label>
+            <CheckBox fx:id="remember" layoutX="127.0" layoutY="438.0" mnemonicParsing="false" text="Remember Me" textFill="WHITE">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </CheckBox>
+            <Label fx:id="error" alignment="CENTER" contentDisplay="CENTER" layoutX="7.0" layoutY="397.0" prefHeight="27.0" prefWidth="583.0" textAlignment="CENTER" textFill="WHITE">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Label>
+         </children></Pane>
+      <Pane layoutX="7.0" prefHeight="723.0" prefWidth="716.0" styleClass="subPan" stylesheets="@../../css/SignInUpStyle.css">
+         <children>
+            <ImageView fitHeight="527.0" fitWidth="695.0" layoutX="11.0" layoutY="155.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../resource/loginBg.jpg" />
+               </image>
+            </ImageView>
+            <Label layoutX="50.0" layoutY="203.0" text="WelCome To CzControl v3" textFill="WHITE">
+               <font>
+                  <Font size="50.0" />
+               </font></Label>
+            <Label layoutX="94.0" layoutY="305.0" text="You can manage the Cz Member here" textFill="WHITE">
+               <font>
+                  <Font size="30.0" />
+               </font>
+            </Label>
+            <Button fx:id="signUpBtn" layoutX="215.0" layoutY="398.0" mnemonicParsing="false" onAction="#change" prefHeight="64.0" prefWidth="253.0" stylesheets="@../../css/SignInUpStyle.css" text="Sign Up">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Button>
+         </children></Pane>
+   </children>
+</AnchorPane>
