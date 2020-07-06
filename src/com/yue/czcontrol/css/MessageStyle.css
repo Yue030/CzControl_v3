@@ -1,0 +1,15 @@
+.jfx-text-field{
+    -fx-font-size: 20px;
+    -fx-text-fill: BLACK;
+    -fx-prompt-text-fill: BLACK;
+    -jfx-focus-color: #3767f8;
+    -jfx-unfocus-color: #3c3b3b;
+}
+.jfx-button{
+    -fx-font-size: 30px;
+    -fx-text-fill: BLACK;
+    -fx-background-color: #3767f8;
+}
+.jfx-text-area{
+    -fx-font-size: 20px;
+}

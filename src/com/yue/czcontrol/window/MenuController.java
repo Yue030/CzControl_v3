@@ -1,5 +1,6 @@
 package com.yue.czcontrol.window;
-
+import com.yue.czcontrol.ExceptionBox;
+import com.yue.czcontrol.utils.StackTrace;
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -25,33 +26,64 @@ import java.util.ResourceBundle;
 public class MenuController implements Initializable {
 
     /**
-     * The Border Pane
+     * The Border Pane.
      */
-    public BorderPane bp;
-
-    //FXML Button
-    public Button mainBtn;
-    public Button memberListBtn;
-    public Button addMemberBtn;
-    public Button deleteMemberBtn;
-    public Button editMemberBtn;
-    public Button leaveBtn;
-    public Button logoutBtn;
-    public Button messageBtn;
+    @FXML
+    private BorderPane bp;
+    /**
+     * Main Btn.
+     */
+    @FXML
+    private Button mainBtn;
+    /**
+     * MemberList Btn.
+     */
+    @FXML
+    private Button memberListBtn;
+    /**
+     * Add Member Btn.
+     */
+    @FXML
+    private Button addMemberBtn;
+    /**
+     * Delete Member Btn.
+     */
+    @FXML
+    private Button deleteMemberBtn;
+    /**
+     * Edit Member Btn.
+     */
+    @FXML
+    private Button editMemberBtn;
+    /**
+     * Leave Btn.
+     */
+    @FXML
+    private Button leaveBtn;
+    /**
+     * Logout Btn.
+     */
+    @FXML
+    private Button logoutBtn;
+    /**
+     * Message Btn.
+     */
+    @FXML
+    private Button messageBtn;
 
     /**
-     * If the ButtomBar is set effect, it will be in the list
+     * If the ButtomBar is set effect, it will be in the list.
      */
     private final List<ButtonBar> barList = new ArrayList<>();
 
     /**
-     * Set Fade in and out effect to ButtonBar
+     * Set Fade in and out effect to ButtonBar.
      * @param mouseEvent MouseEvent
      */
     @FXML
-    public void fadeBar(MouseEvent mouseEvent) {
+    public void fadeBar(final MouseEvent mouseEvent) {
         ButtonBar bar = (ButtonBar) mouseEvent.getSource();
-        if(!barList.contains(bar)){
+        if (!barList.contains(bar)) {
             barList.add(bar);
             ColorAdjust colorAdjust = new ColorAdjust();
             colorAdjust.setBrightness(0.4);
@@ -60,8 +92,14 @@ public class MenuController implements Initializable {
             bar.setOnMouseEntered(e1 -> {
                 Timeline fadeInTimeline = new Timeline(
                         new KeyFrame(Duration.seconds(0),
-                                new KeyValue(colorAdjust.brightnessProperty(), colorAdjust.brightnessProperty().getValue(), Interpolator.LINEAR)),
-                        new KeyFrame(Duration.seconds(0.5), new KeyValue(colorAdjust.brightnessProperty(), 0.4, Interpolator.LINEAR)
+                                new KeyValue(colorAdjust.brightnessProperty(),
+                                        colorAdjust.brightnessProperty()
+                                                .getValue(),
+                                        Interpolator.LINEAR)),
+                        new KeyFrame(Duration.seconds(0.5),
+                                new KeyValue(colorAdjust.brightnessProperty(),
+                                        0.4,
+                                        Interpolator.LINEAR)
                         ));
                 fadeInTimeline.setCycleCount(1);
                 fadeInTimeline.setAutoReverse(false);
@@ -72,8 +110,14 @@ public class MenuController implements Initializable {
             bar.setOnMouseExited(e1 -> {
                 Timeline fadeOutTimeline = new Timeline(
                         new KeyFrame(Duration.seconds(0),
-                                new KeyValue(colorAdjust.brightnessProperty(), colorAdjust.brightnessProperty().getValue(), Interpolator.LINEAR)),
-                        new KeyFrame(Duration.seconds(0.5), new KeyValue(colorAdjust.brightnessProperty(), 0, Interpolator.LINEAR)
+                                new KeyValue(colorAdjust.brightnessProperty(),
+                                        colorAdjust.brightnessProperty()
+                                                .getValue(),
+                                        Interpolator.LINEAR)),
+                        new KeyFrame(Duration.seconds(0.5),
+                                new KeyValue(colorAdjust.brightnessProperty(),
+                                        0,
+                                        Interpolator.LINEAR)
                         ));
                 fadeOutTimeline.setCycleCount(1);
                 fadeOutTimeline.setAutoReverse(false);
@@ -83,41 +127,44 @@ public class MenuController implements Initializable {
     }
 
     /**
-     * Get Button to change Scene
+     * Get Button to change Scene.
      * @param event ActionEvent
-     * @throws IOException IOException
      */
     @FXML
-    public void change(ActionEvent event) throws IOException {
-        if(event.getSource() == mainBtn){
+    public void change(final ActionEvent event) {
+        if (event.getSource() == mainBtn) {
             changeTo("Home");
-        } else if(event.getSource() == memberListBtn){
+        } else if (event.getSource() == memberListBtn) {
             changeTo("MemberList");
-        } else if(event.getSource() == addMemberBtn){
+        } else if (event.getSource() == addMemberBtn) {
             changeTo("AddMember");
-        } else if(event.getSource() == deleteMemberBtn){
+        } else if (event.getSource() == deleteMemberBtn) {
             changeTo("DeleteMember");
-        } else if(event.getSource() == editMemberBtn){
+        } else if (event.getSource() == editMemberBtn) {
             changeTo("EditMember");
-        } else if(event.getSource() == leaveBtn){
+        } else if (event.getSource() == leaveBtn) {
             changeTo("Leave");
-        } else if(event.getSource() == logoutBtn){
+        } else if (event.getSource() == logoutBtn) {
             changeTo("Logout");
-        } else if(event.getSource() == messageBtn){
+        } else if (event.getSource() == messageBtn) {
             changeTo("Message");
         }
     }
 
     /**
-     * Change Scene to the Specific file
+     * Change Scene to the Specific file.
      * @param fileName FileName
      */
-    private void changeTo(String fileName){
-        try{
-            Parent root = FXMLLoader.load(getClass().getResource("fxml/features/" + fileName + ".fxml"));
+    private void changeTo(final String fileName) {
+        try {
+            Parent root = FXMLLoader.load(
+                    getClass().
+                            getResource("fxml/features/" + fileName + ".fxml"));
             bp.setCenter(root);
-        } catch(IOException e){
-            e.printStackTrace();
+        } catch (IOException e) {
+            String message = StackTrace.getStackTrace(e);
+            ExceptionBox box = new ExceptionBox(message);
+            box.show();
         }
     }
 
@@ -131,12 +178,15 @@ public class MenuController implements Initializable {
      * @param resources The resources used to localize the root object, or <tt>null</tt> if
      */
     @Override
-    public void initialize(URL location, ResourceBundle resources) {
+    public void initialize(final URL location, final ResourceBundle resources) {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("fxml/features/Home.fxml"));
+            Parent root = FXMLLoader.load(
+                    getClass().getResource("fxml/features/Home.fxml"));
             bp.setCenter(root);
         } catch (IOException e) {
-            e.printStackTrace();
+            String message = StackTrace.getStackTrace(e);
+            ExceptionBox box = new ExceptionBox(message);
+            box.show();
         }
     }
 }

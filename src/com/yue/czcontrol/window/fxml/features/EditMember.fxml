@@ -1,12 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXComboBox?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="775.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="775.0" stylesheets="@../../../css/EditMemberStyle.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.yue.czcontrol.window.features.EditMemberController">
    <children>
-      <Label layoutX="292.0" layoutY="201.0" text="EditMember">
+      <Label layoutX="300.0" layoutY="38.0" prefHeight="48.0" prefWidth="175.0" text="EditMember">
+         <font>
+            <Font size="30.0" />
+         </font>
+      </Label>
+      <JFXTextField fx:id="name" labelFloat="true" layoutX="113.0" layoutY="233.0" prefHeight="59.0" prefWidth="563.0" promptText="Name" />
+      <JFXTextField fx:id="rank" labelFloat="true" layoutX="113.0" layoutY="327.0" prefHeight="59.0" prefWidth="563.0" promptText="Rank" />
+      <JFXTextField fx:id="active" labelFloat="true" layoutX="113.0" layoutY="432.0" prefHeight="59.0" prefWidth="563.0" promptText="Active" />
+      <JFXComboBox fx:id="member" labelFloat="true" layoutX="113.0" layoutY="130.0" prefHeight="67.0" prefWidth="411.0" promptText="Member" onAction="#refresh"/>
+      <JFXButton layoutX="563.0" layoutY="527.0" onAction="#apply" prefHeight="48.0" prefWidth="194.0" text="Apply" />
+      <Label layoutX="24.0" layoutY="86.0" text="Please choose a member in comboBox, it will get the name, rank and active from the Member">
+         <font>
+            <Font size="17.0" />
+         </font>
+      </Label>
+      <Label fx:id="handler" layoutX="113.0" layoutY="527.0" prefHeight="59.0" prefWidth="450.0" text="Handler: ">
          <font>
             <Font size="30.0" />
          </font>

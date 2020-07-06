@@ -1,3 +1,9 @@
 .text{
     -fx-font-size: 15pt;
 }
+
+.jfx-button{
+    -fx-background-color: #E45652;
+    -fx-text-fill: WHITE;
+    -fx-background-radius: 12px;
+}

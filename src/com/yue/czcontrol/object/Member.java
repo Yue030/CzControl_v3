@@ -2,66 +2,91 @@ package com.yue.czcontrol.object;
 
 public class Member {
 
-    private String id;
-    private String name;
-    private String rank;
-    private String active;
-    private String handler;
+    /**
+     * Member ID.
+     */
+    private final String id;
+    /**
+     * Member Name.
+     */
+    private final String name;
+    /**
+     * Member Rank.
+     */
+    private final String rank;
+    /**
+     * Member Active.
+     */
+    private final String active;
+    /**
+     * Member Active All
+     */
+    private final String active_all;
+    /**
+     * Member Handler.
+     */
+    private final String handler;
 
-    public Member(){
-        this.id = "";
-        this.name = "";
-        this.rank = "";
-        this.active = "";
-        this.handler = "";
+    /**
+     * Member Object.
+     * @param uid Member ID
+     * @param uName Member Name
+     * @param uRank Member Rank
+     * @param uActive Member Active
+     * @param uHandler Member Handler
+     */
+    public Member(final String uid, final String uName,
+                  final String uRank, final String uActive,
+                  final String uActive_all, final String uHandler) {
+        this.id = uid;
+        this.name = uName;
+        this.rank = uRank;
+        this.active = uActive;
+        this.active_all = uActive_all;
+        this.handler = uHandler;
     }
 
-    public Member(String id, String name, String rank, String active, String handler){
-        this.id = id;
-        this.name = name;
-        this.rank = rank;
-        this.active = active;
-        this.handler = handler;
-    }
 
-
+    /**
+     * Get Member ID.
+     * @return id
+     */
     public String getId() {
         return id;
     }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
+    /**
+     * Get Member Name.
+     * @return name
+     */
     public String getName() {
         return name;
     }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
+    /**
+     * Get Member Rank.
+     * @return rank
+     */
     public String getRank() {
         return rank;
     }
-
-    public void setRank(String rank) {
-        this.rank = rank;
-    }
-
+    /**
+     * Get Member Active.
+     * @return active
+     */
     public String getActive() {
         return active;
     }
-
-    public void setActive(String active) {
-        this.active = active;
+    /**
+     * Get Member Active all
+     * @return ActiveAll
+     */
+    public String getActive_all(){
+        return active_all;
     }
-
+    /**
+     * Get Member Handler.
+     * @return handler
+     */
     public String getHandler() {
         return handler;
-    }
-
-    public void setHandler(String handler) {
-        this.handler = handler;
     }
 }

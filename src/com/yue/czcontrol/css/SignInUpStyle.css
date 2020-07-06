@@ -9,14 +9,17 @@
     -fx-background-color: #9C2B27;
 }
 
-.input{
-    -fx-background-color: #9C2B27;
-    -fx-text-fill: #FFFFFF;
+.jfx-text-field, .jfx-password-field {
+    -fx-font-size: 25px;
+    -fx-text-fill: WHITE;
+    -fx-prompt-text-fill: WHITE;
+    -jfx-focus-color: #66FF00;
+    -jfx-unfocus-color: #A9A9A9;
 }
 
 .button{
     -fx-background-color: #E45652;
-    -fx-text-fill: #FFFFFF;
+    -fx-text-fill: WHITE;
     -fx-background-radius: 12px;
 }
 

@@ -1,15 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="775.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="775.0" stylesheets="@../../../css/DeleteMemberStyle.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.yue.czcontrol.window.features.DeleteMemberController">
    <children>
-      <Label layoutX="269.0" layoutY="216.0" text="DeleteMember">
+      <Label layoutX="281.0" layoutY="38.0" text="DeleteMember">
          <font>
             <Font size="30.0" />
          </font>
       </Label>
+      <JFXComboBox fx:id="box" labelFloat="true" layoutX="207.0" layoutY="264.0" prefHeight="72.0" prefWidth="341.0" promptText="Member" />
+      <Label layoutX="199.0" layoutY="202.0" text="Please Choose a Member">
+         <font>
+            <Font size="30.0" />
+         </font>
+      </Label>
+      <JFXButton onAction="#apply" layoutX="556.0" layoutY="478.0" prefHeight="47.0" prefWidth="181.0" text="Apply">
+         <font>
+            <Font size="30.0" />
+         </font>
+      </JFXButton>
    </children>
 </AnchorPane>

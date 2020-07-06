@@ -1,13 +1,18 @@
 package com.yue.czcontrol.window;
 
+import com.jfoenix.controls.JFXTextField;
+import com.yue.czcontrol.AlertBox;
+import com.yue.czcontrol.ExceptionBox;
 import com.yue.czcontrol.Main;
+import com.yue.czcontrol.connector.DBConnector;
 import com.yue.czcontrol.exception.UploadFailedException;
+import com.yue.czcontrol.utils.StackTrace;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 
 import javax.swing.*;
 import java.io.IOException;
@@ -16,29 +21,50 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class SignUpController {
-    public Button signInBtn;
+    /**
+     * Name Input.
+     */
+    @FXML
+    private JFXTextField nameInput;
+    /**
+     * Account Input.
+     */
+    @FXML
+    private JFXTextField accountInput;
+    /**
+     * Password Input.
+     */
+    @FXML
+    private JFXTextField passwordInput;
+    /**
+     * Confirm Password Input.
+     */
+    @FXML
+    private JFXTextField confirmPasswordInput;
+    /**
+     * Error Message.
+     */
+    @FXML
+    private Label error;
 
-    public TextField nameInput;
-    public TextField accountInput;
-    public TextField passwordInput;
-    public TextField confirmPasswordInput;
-
-    public Label error;
-
+    /**
+     * Is Ok to sign In.
+     */
     private boolean isOK;
 
     /**
-     * Detect account is exist or not
+     * Detect account is exist or not.
      * @param account Input account
      * @return boolean
      */
-    private boolean isExistAccount(String account) {
+    private boolean isExistAccount(final String account) {
         try {
             //Get Data(SQL Syntax)
             String accountList = "SELECT * FROM admin WHERE ACCOUNT=?";
 
             //String accountList to PreparedStatement
-            PreparedStatement psst = SplashController.getConn().prepareStatement(accountList);
+            PreparedStatement psst =
+                    DBConnector.getConnection().prepareStatement(accountList);
             psst.setString(1, account);
 
             ResultSet rs = psst.executeQuery();
@@ -46,15 +72,21 @@ public class SignUpController {
             //Detect the data is exist or not
             return rs.next();
 
-        } catch (SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             error.setText("\u8cc7\u6599\u5eab\u4e0d\u5b58\u5728");
+
+            String message = StackTrace.getStackTrace(e);
+            ExceptionBox box = new ExceptionBox(message);
+            box.show();
+        } finally {
+            DBConnector.close();
         }
         return false;
     }
 
 
     /**
-     * Register Account
+     * Register Account.
      * @param name Input name
      * @param account Input account
      * @param password Input password
@@ -62,7 +94,9 @@ public class SignUpController {
      * @throws UploadFailedException When the data upload failed
      */
 
-    private void register(String name, String account, String password, String confirmPassword) throws UploadFailedException {
+    private void register(final String name, final String account,
+                          final String password, final String confirmPassword)
+            throws UploadFailedException {
         boolean accountExist = isExistAccount(account);
 
         if (accountExist) {
@@ -72,10 +106,15 @@ public class SignUpController {
             if (password.equals(confirmPassword)) {
                 try {
                     //Add data(SQL Syntax)
-                    String insertAccount = "INSERT INTO `admin`(`NAME`, `ACCOUNT`, `PASSWORD`) VALUES (?,?,?)";
+                    String insertAccount =
+                            "INSERT INTO `"
+                                    + "admin`(`NAME`, `ACCOUNT`, `PASSWORD`) "
+                                    + "VALUES (?,?,?)";
 
                     //String insertAccount to PreparedStatement
-                    PreparedStatement psst = SplashController.getConn().prepareStatement(insertAccount);
+                    PreparedStatement psst =
+                            DBConnector.getConnection()
+                                    .prepareStatement(insertAccount);
                     psst.setString(1, name);
                     psst.setString(2, account);
                     psst.setString(3, password);
@@ -84,11 +123,16 @@ public class SignUpController {
                     if (psst.executeUpdate() > 0) {
                         isOK = true;
                     } else {
-                        throw new UploadFailedException("Data is Upload failed.");
+                        throw new UploadFailedException(
+                                "Data is Upload failed.");
                     }
 
-                } catch (SQLException e) {
-                    e.printStackTrace();
+                } catch (SQLException | ClassNotFoundException e) {
+                    String message = StackTrace.getStackTrace(e);
+                    ExceptionBox box = new ExceptionBox(message);
+                    box.show();
+                } finally {
+                    DBConnector.close();
                 }
             } else {
                 error.setText("\u5bc6\u78bc\u5fc5\u9808\u76f8\u540c");
@@ -96,6 +140,11 @@ public class SignUpController {
         }
     }
 
+    /**
+     * SignUp.
+     * @throws IOException IOException
+     */
+    @FXML
     public void signUp() throws IOException {
         isOK = false;
         //Get the input data
@@ -106,34 +155,49 @@ public class SignUpController {
 
         //Set String regex format
         final String regex = "[A-Za-z0-9]\\w{3,10}";
-        if (!name.isEmpty() && !account.isEmpty() && !password.isEmpty() && !confirmPassword.isEmpty()) {//Detect the input data is empty. if not, continue the method
-            if (account.matches(regex) && password.matches(regex) && confirmPassword.matches(regex)) {//Detect the input data is meets the format
+        if (!name.isEmpty()
+                && !account.isEmpty()
+                && !password.isEmpty()
+                && !confirmPassword.isEmpty()) {
+            //Detect the input data is empty. if not, continue the method
+            if (account.matches(regex)
+                    && password.matches(regex)
+                    && confirmPassword.matches(regex)) {
+                //Detect the input data is meets the format
                 try {
                     register(name, account, password, confirmPassword);
                 } catch (UploadFailedException ufe) {
                     error.setText("\u8a3b\u518a\u5931\u6557");
-                    ufe.printStackTrace();
-                }//Register
+
+                    String message = StackTrace.getStackTrace(ufe);
+                    ExceptionBox box = new ExceptionBox(message);
+                    box.show();
+                } //Register
             } else {
-                error.setText("\u683c\u5f0f\u4e0d\u7b26\u5408(\u6700\u5c114,\u6700\u591a10\u5b57)");
+                error.setText("\u683c\u5f0f\u4e0d\u7b26\u5408(\u6700\u5c114"
+                        + ",\u6700\u591a10\u5b57)");
             }
         } else {
             error.setText("\u8cc7\u6599\u4e0d\u5b8c\u6574");
         }
 
         if (isOK) {
-            JOptionPane.showMessageDialog(null, "\u8a3b\u518a\u5e33\u865f\u6210\u529f");
+            AlertBox.show("Completed",
+                    "\u8a3b\u518a\u5e33\u865f\u6210\u529f",
+                    AlertBox.Type.INFORMATION);
             toSignIn();
         }
     }
 
     /**
-     * Change to SignIn Scene
+     * Change to SignIn Scene.
      * @throws IOException IOException
      */
+    @FXML
     public void toSignIn() throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("fxml/Login.fxml"));
-        Main.stage.setScene(new Scene(root, 1400, 700));
+        Parent root = FXMLLoader.load(
+                getClass().getResource("fxml/Login.fxml"));
+        Main.getStage().setScene(new Scene(root, 1400, 700));
         root.requestFocus();
     }
 }

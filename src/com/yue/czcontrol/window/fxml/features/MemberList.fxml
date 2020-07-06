@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="775.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.yue.czcontrol.window.features.MemberListController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="775.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.yue.czcontrol.window.features.MemberListController">
    <children>
       <Label layoutX="293.0" layoutY="14.0" text="MemberList">
          <font>
@@ -13,12 +16,14 @@
       </Label>
       <TableView fx:id="table" layoutX="7.0" layoutY="62.0" prefHeight="534.0" prefWidth="762.0" stylesheets="@../../../css/MemberListStyle.css">
          <columns>
-            <TableColumn fx:id="idColumn" minWidth="150.0" prefWidth="78.20003032684326" text="ID" />
-            <TableColumn fx:id="nameColumn" minWidth="150.0" prefWidth="72.19998168945312" text="NAME" />
-            <TableColumn fx:id="rankColumn" minWidth="150.0" prefWidth="75.0" text="RANK" />
-            <TableColumn fx:id="activeColumn" minWidth="150.0" prefWidth="75.0" text="ACTIVE" />
-            <TableColumn fx:id="handlerColumn" minWidth="150.0" prefWidth="75.0" text="HANDLER" />
+            <TableColumn fx:id="idColumn" minWidth="120.0" prefWidth="78.20003032684326" text="ID" />
+            <TableColumn fx:id="nameColumn" minWidth="125.0" prefWidth="72.19998168945312" text="NAME" />
+            <TableColumn fx:id="rankColumn" minWidth="130.0" prefWidth="75.0" text="RANK" />
+            <TableColumn fx:id="activeColumn" minWidth="130.0" prefWidth="75.0" text="ACTIVE" />
+            <TableColumn fx:id="activeAllColumn" minWidth="130.0" prefWidth="75.0" text="ACTIVE_ALL" />
+            <TableColumn fx:id="handlerColumn" minWidth="130.0" prefWidth="75.0" text="HANDLER" />
          </columns>
       </TableView>
+      <JFXButton buttonType="RAISED" layoutX="588.0" layoutY="15.0" onAction="#generatePDF" ripplerFill="#5e5e5e" stylesheets="@../../../css/MemberListStyle.css" text="Generate PDF" />
    </children>
 </AnchorPane>
