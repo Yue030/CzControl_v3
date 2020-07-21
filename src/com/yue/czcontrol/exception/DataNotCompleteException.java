@@ -2,7 +2,7 @@ package com.yue.czcontrol.exception;
 
 import com.yue.czcontrol.ErrorCode;
 
-public class UploadFailedException extends Exception {
+public class DataNotCompleteException extends Exception{
 
     /**
      * serial Version ID.
@@ -10,24 +10,24 @@ public class UploadFailedException extends Exception {
     private static final long serialVersionUID = 1L;
 
     /**
-     * When throw a Unknown Exception.
+     * When the DataNotCompleted.
      */
-    public UploadFailedException() {
+    public DataNotCompleteException() {
         super("Error Code:" + getCode() + ". ");
     }
     /**
-     * When throw a Unknown Exception.
+     * When the DataNotCompleted.
      * @param msg The message
      */
-    public UploadFailedException(final String msg) {
+    public DataNotCompleteException(final String msg) {
         super("Error Code:" + getCode() + ". " + msg);
     }
     /**
-     * When throw a Unknown Exception.
+     * When the DataNotCompleted.
      * @param msg The message
      * @param cause Cause by
      */
-    public UploadFailedException(final String msg, final Throwable cause) {
+    public DataNotCompleteException(final String msg, final Throwable cause) {
         super("Error Code:" + getCode() + ". " + msg, cause);
     }
 
@@ -36,7 +36,7 @@ public class UploadFailedException extends Exception {
      * @return error code
      */
     public static int getCode(){
-        return ErrorCode.UploadFailed.getCode();
+        return ErrorCode.DataNotCompleted.getCode();
     }
 
 }

@@ -3,12 +3,12 @@ package com.yue.czcontrol.window;
 import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
-import com.yue.czcontrol.ExceptionBox;
-import com.yue.czcontrol.Main;
-import com.yue.czcontrol.TextInput;
+import com.yue.czcontrol.*;
 import com.yue.czcontrol.connector.DBConnector;
 import com.yue.czcontrol.connector.SocketConnector;
-import com.yue.czcontrol.exception.UploadFailedException;
+import com.yue.czcontrol.error.DBCloseFailedError;
+import com.yue.czcontrol.error.DBConnectFailedError;
+import com.yue.czcontrol.exception.*;
 import com.yue.czcontrol.utils.SocketSetting;
 import com.yue.czcontrol.utils.StackTrace;
 import javafx.event.ActionEvent;
@@ -25,6 +25,8 @@ import java.net.URL;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.prefs.Preferences;
 
@@ -95,8 +97,9 @@ public class LoginController implements SocketSetting, Initializable {
     /**
      * Get user Name.
      * @return {@link #find(String)}
+     * @throws DBCloseFailedError DataBase Object Close Failed
      */
-    public static String getUserName() {
+    public static String getUserName() throws DBCloseFailedError {
         return find(getUserAccount());
     }
 
@@ -104,10 +107,9 @@ public class LoginController implements SocketSetting, Initializable {
      * add Data.
      * @param msg msg
      * @see SocketSetting
-     * @throws UploadFailedException UploadFailedException
      */
     @Override
-    public void addData(final String msg) throws UploadFailedException {
+    public void addData(final String msg) {
 
     }
 
@@ -135,8 +137,9 @@ public class LoginController implements SocketSetting, Initializable {
      * Get the name from account.
      * @param account User Account
      * @return rs.getString("NAME")
+     * @throws DBCloseFailedError DataBase Object Close Failed
      */
-    private static String find(final String account) {
+    private static String find(final String account) throws DBCloseFailedError {
         try {
             String select = "SELECT `NAME` FROM `ADMIN` WHERE ACCOUNT=?";
             PreparedStatement psst =
@@ -153,6 +156,11 @@ public class LoginController implements SocketSetting, Initializable {
             String message = StackTrace.getStackTrace(e);
             ExceptionBox box = new ExceptionBox(message);
             box.show();
+        } catch (DBConnectFailedError e) {
+            ExceptionBox box = new ExceptionBox("Error Code: " + DBConnectFailedError.getCode());
+            box.show();
+        } catch (Exception e) {
+            throw new UnknownException();
         } finally {
             DBConnector.close();
         }
@@ -164,10 +172,10 @@ public class LoginController implements SocketSetting, Initializable {
      *
      * @param account User input account
      * @param password User input password
-     * @throws IOException IOException
+     * @throws DBCloseFailedError DataBase Object Close Failed
      */
     private void login(final String account,
-                       final String password) throws IOException {
+                       final String password) throws DBCloseFailedError {
 
         try {
             String userList =
@@ -213,12 +221,11 @@ public class LoginController implements SocketSetting, Initializable {
                         Main.getStage().setScene(new Scene(root, 1000, 600));
                         root.requestFocus();
                     } else {
-                        error.setText("\u9a57\u8b49\u78bc\u932f\u8aa4");
+                        throw new PinIsWrongException("Client is key-in a wrong pin.");
                     }
                 }
             } else {
-                error.setText("\u6c92\u6709\u6b64\u5e33\u865f\u6216"
-                        + "\u5bc6\u78bc\u8f38\u5165\u932f\u8aa4");
+                throw new LoginFailedException("Client is key-in a not exist account or wrong password.");
             }
 
         } catch (SQLException | ClassNotFoundException e) {
@@ -227,6 +234,20 @@ public class LoginController implements SocketSetting, Initializable {
             String message = StackTrace.getStackTrace(e);
             ExceptionBox box = new ExceptionBox(message);
             box.show();
+        } catch (DBConnectFailedError e) {
+            ExceptionBox box = new ExceptionBox("Error Code: " + DBConnectFailedError.getCode());
+            box.show();
+        } catch (PinIsWrongException e) {
+            error.setText("\u9a57\u8b49\u78bc\u932f\u8aa4");
+            String message = StackTrace.getStackTrace(e);
+            System.err.println(message);
+        } catch (LoginFailedException e) {
+            error.setText("\u6c92\u6709\u6b64\u5e33\u865f\u6216"
+                    + "\u5bc6\u78bc\u8f38\u5165\u932f\u8aa4");
+            String message = StackTrace.getStackTrace(e);
+            System.err.println(message);
+        } catch (Exception e) {
+            throw new UnknownException();
         } finally {
             DBConnector.close();
         }
@@ -236,9 +257,10 @@ public class LoginController implements SocketSetting, Initializable {
      * Change to other Scene.
      * @param event ActionEvent
      * @throws IOException IOException
+     * @throws DBCloseFailedError DataBase Object Close Failed
      */
     @FXML
-    public void change(final ActionEvent event) throws IOException {
+    public void change(final ActionEvent event) throws IOException, DBCloseFailedError {
         if (event.getSource() == signUpBtn) {
             Parent root = FXMLLoader.load(getClass().getResource("fxml/SignUp.fxml"));
             Main.getStage().setScene(new Scene(root, 1400, 700));
@@ -247,6 +269,60 @@ public class LoginController implements SocketSetting, Initializable {
             String account = accountInput.getText();
             String password = passwordInput.getText();
             login(account, password);
+        }
+    }
+
+    /**
+     * Forget Password.
+     */
+    @FXML
+    private void forgetPassword()  {
+        String user = TextInput.show("Forget Password", "Please input your account");
+        try {
+            findPassword(user);
+        } catch (DBCloseFailedError e) {
+            ExceptionBox box = new ExceptionBox("Error Code: " + DBCloseFailedError.getCode());
+            box.show();
+        }
+    }
+
+    private void findPassword(String user) throws DBCloseFailedError {
+        try {
+            String select = "SELECT * FROM ADMIN WHERE ACCOUNT=?";
+
+            PreparedStatement psst = DBConnector.getConnection().prepareStatement(select);
+            psst.setString(1, user);
+
+            ResultSet rs = psst.executeQuery();
+
+            if(rs.next()) {
+                String name = rs.getString(2);
+                String account = rs.getString(3);
+                String password = rs.getString(4);
+                String pin = rs.getString(5);
+                String mail = rs.getString(7);
+
+                List<String> list = new ArrayList<>();
+                list.add("Name: " + name);
+                list.add("Account: " + account);
+                list.add("Password: " + password);
+                list.add("Pin: " + pin);
+                list.add("Mail: " + mail);
+
+                MailSender.send("Cz Control Version 3", "Forget Password", mail, list);
+            }
+
+        } catch (SQLException | ClassNotFoundException e) {
+            String message = StackTrace.getStackTrace(e);
+            ExceptionBox box = new ExceptionBox(message);
+            box.show();
+        } catch (DBConnectFailedError e) {
+            ExceptionBox box = new ExceptionBox("Error Code: " + DBConnectFailedError.getCode());
+            box.show();
+        } catch (Exception e) {
+            throw new UnknownException();
+        } finally {
+            DBConnector.close();
         }
     }
 
@@ -264,8 +340,7 @@ public class LoginController implements SocketSetting, Initializable {
             out = new PrintWriter(
                     SocketConnector.getSocket().getOutputStream());
         } catch (IOException e) {
-            String message = StackTrace.getStackTrace(e);
-            ExceptionBox box = new ExceptionBox(message);
+            ExceptionBox box = new ExceptionBox("Error Code: " + ErrorCode.IO.getCode());
             box.show();
         }
 

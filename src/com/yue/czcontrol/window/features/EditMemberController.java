@@ -3,11 +3,15 @@ package com.yue.czcontrol.window.features;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXTextField;
 import com.yue.czcontrol.AlertBox;
+import com.yue.czcontrol.ErrorCode;
 import com.yue.czcontrol.ExceptionBox;
 import com.yue.czcontrol.connector.DBConnector;
 import com.yue.czcontrol.connector.SocketConnector;
+import com.yue.czcontrol.error.DBCloseFailedError;
+import com.yue.czcontrol.error.DBConnectFailedError;
 import com.yue.czcontrol.exception.NameNotFoundException;
-import com.yue.czcontrol.exception.UploadFailedException;
+import com.yue.czcontrol.exception.NotExistMemberException;
+import com.yue.czcontrol.exception.UnknownException;
 import com.yue.czcontrol.utils.BoxInit;
 import com.yue.czcontrol.utils.SocketSetting;
 import com.yue.czcontrol.utils.StackTrace;
@@ -65,9 +69,10 @@ public class EditMemberController implements Initializable, TimeProperty, BoxIni
 
     /**
      * Action Button.
+     * @throws DBCloseFailedError DataBase Object Close Failed
      */
     @FXML
-    private void apply() throws UploadFailedException, NameNotFoundException {
+    private void apply() throws DBCloseFailedError {
         String[] value = member.getValue().split(":");
         String id = getID(value[1]);
         System.out.println(id);
@@ -77,8 +82,12 @@ public class EditMemberController implements Initializable, TimeProperty, BoxIni
                 rank.getText());
     }
 
+    /**
+     * Refresh.
+     * @throws DBCloseFailedError DataBase Object Close Failed
+     */
     @FXML
-    private void refresh() throws NameNotFoundException {
+    private void refresh() throws DBCloseFailedError {
         String[] value = member.getValue().split(":");
         String id = getID(value[1]);
         System.out.println(id);
@@ -98,10 +107,17 @@ public class EditMemberController implements Initializable, TimeProperty, BoxIni
         try {
             out = new PrintWriter(SocketConnector.getSocket().getOutputStream());
         } catch (IOException e) {
-            String message = StackTrace.getStackTrace(e);
-            new ExceptionBox(message).show();
+            ExceptionBox box = new ExceptionBox("Error Code: " + ErrorCode.IO.getCode());
+            box.show();
         }
-        initBox(member);
+        try {
+            initBox(member);
+        } catch (DBCloseFailedError e) {
+            ExceptionBox box = new ExceptionBox("Error Code: " + DBCloseFailedError.getCode());
+            box.show();
+        } catch (Exception e) {
+            throw new UnknownException();
+        }
     }
 
     /**
@@ -110,7 +126,7 @@ public class EditMemberController implements Initializable, TimeProperty, BoxIni
      * @param box JComboBox
      */
     @Override
-    public void initBox(final JFXComboBox<String> box) {
+    public void initBox(final JFXComboBox<String> box) throws DBCloseFailedError {
         try {
             String select = "SELECT * FROM PLAYER WHERE HANDLER=?";
             PreparedStatement psst =
@@ -131,6 +147,11 @@ public class EditMemberController implements Initializable, TimeProperty, BoxIni
             String message = StackTrace.getStackTrace(e);
             ExceptionBox eb = new ExceptionBox(message);
             eb.show();
+        } catch (DBConnectFailedError e) {
+            ExceptionBox b = new ExceptionBox("Error Code: " + DBConnectFailedError.getCode());
+            b.show();
+        } catch (Exception e) {
+            throw new UnknownException();
         } finally {
             DBConnector.close();
         }
@@ -141,10 +162,9 @@ public class EditMemberController implements Initializable, TimeProperty, BoxIni
      *
      * @param name member's name
      * @return String name
-     * @throws NameNotFoundException When the NameNotFound
      */
     @Override
-    public String getID(final String name) throws NameNotFoundException {
+    public String getID(final String name) throws DBCloseFailedError {
         try {
             String select = "SELECT `ID` FROM PLAYER WHERE NAME=?";
 
@@ -164,6 +184,11 @@ public class EditMemberController implements Initializable, TimeProperty, BoxIni
             String message = StackTrace.getStackTrace(e);
             ExceptionBox eb = new ExceptionBox(message);
             eb.show();
+        } catch (DBConnectFailedError e) {
+            ExceptionBox box = new ExceptionBox("Error Code: " + DBConnectFailedError.getCode());
+            box.show();
+        } catch (Exception e) {
+            throw new UnknownException();
         } finally {
             DBConnector.close();
         }
@@ -174,10 +199,9 @@ public class EditMemberController implements Initializable, TimeProperty, BoxIni
      * add Data to DataBase.
      *
      * @param msg msg
-     * @throws UploadFailedException upload failed
      */
     @Override
-    public void addData(final String msg) throws UploadFailedException {
+    public void addData(final String msg) {
     }
 
     /**
@@ -203,8 +227,9 @@ public class EditMemberController implements Initializable, TimeProperty, BoxIni
      * and print it in TextField
      *
      * @param id The arg's id
+     * @throws DBCloseFailedError DataBase Object Close Failed
      */
-    private void getData(final String id) {
+    private void getData(final String id) throws DBCloseFailedError {
         try {
             //Get data(SQL Syntax)
             String select =
@@ -230,20 +255,26 @@ public class EditMemberController implements Initializable, TimeProperty, BoxIni
                 this.active.setText(active);
                 this.rank.setText(rank);
                 this.handler.setText("\u5275\u5efa\u8005: " + handler);
-            } else {//if not
-                //delete the data in input field
-                this.name.setText("");
-                this.active.setText("");
-                this.rank.setText("");
-                this.handler.setText("\u5275\u5efa\u8005: ");
-                AlertBox.show("Warning",
-                        "\u7121\u6b64ID\u6210\u54e1",
-                        AlertBox.Type.WARNING);
+            } else {
+                throw new NotExistMemberException();
             }
 
         } catch (ClassNotFoundException | SQLException e) {
             String message = StackTrace.getStackTrace(e);
             new ExceptionBox(message).show();
+        } catch (DBConnectFailedError e) {
+            ExceptionBox box = new ExceptionBox("Error Code: " + DBConnectFailedError.getCode());
+            box.show();
+        } catch (NotExistMemberException e) {
+            this.name.setText("");
+            this.active.setText("");
+            this.rank.setText("");
+            this.handler.setText("\u5275\u5efa\u8005: ");
+            AlertBox.show("Warning",
+                    "\u7121\u6b64ID\u6210\u54e1" + " Error Code: " + NotExistMemberException.getCode(),
+                    AlertBox.Type.WARNING);
+        } catch (Exception e) {
+            throw new UnknownException();
         } finally {
           DBConnector.close();
         }
@@ -256,9 +287,9 @@ public class EditMemberController implements Initializable, TimeProperty, BoxIni
      * @param name The user's name
      * @param active The user's active
      * @param rank The user's rank
-     * @throws UploadFailedException When the data upload failed
+     * @throws DBCloseFailedError DataBase Object Close Failed
      */
-    private void updateData(final String id, final String name, final String active, final String rank) throws UploadFailedException {
+    private void updateData(final String id, final String name, final String active, final String rank) throws DBCloseFailedError {
         try {
             //Edit the data(SQL Syntax)
             String update =
@@ -284,14 +315,16 @@ public class EditMemberController implements Initializable, TimeProperty, BoxIni
                         + "\t" + LoginController.getUserName()
                         + "\u5df2\u66f4\u6539 [" + id + "]"
                         + "\u6210\u54e1\u8cc7\u6599 ~[console]");
-            } else {
-                throw new UploadFailedException(
-                        "Data is Upload failed.");
             }
 
         } catch (SQLException | ClassNotFoundException e) {
             String message = StackTrace.getStackTrace(e);
             new ExceptionBox(message).show();
+        } catch (DBConnectFailedError e) {
+            ExceptionBox box = new ExceptionBox("Error Code: " + DBConnectFailedError.getCode());
+            box.show();
+        } catch (Exception e) {
+            throw new UnknownException();
         } finally {
             DBConnector.close();
         }

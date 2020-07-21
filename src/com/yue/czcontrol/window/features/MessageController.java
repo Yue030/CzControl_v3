@@ -3,9 +3,13 @@ package com.yue.czcontrol.window.features;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextArea;
 import com.jfoenix.controls.JFXTextField;
+import com.yue.czcontrol.ErrorCode;
 import com.yue.czcontrol.ExceptionBox;
 import com.yue.czcontrol.connector.DBConnector;
 import com.yue.czcontrol.connector.SocketConnector;
+import com.yue.czcontrol.error.DBCloseFailedError;
+import com.yue.czcontrol.error.DBConnectFailedError;
+import com.yue.czcontrol.exception.UnknownException;
 import com.yue.czcontrol.exception.UploadFailedException;
 import com.yue.czcontrol.utils.SocketSetting;
 import com.yue.czcontrol.utils.StackTrace;
@@ -20,6 +24,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.SocketException;
 import java.net.URL;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -63,10 +68,9 @@ public class MessageController implements
      * add Data to DataBase.
      *
      * @param msg msg
-     * @throws UploadFailedException upload failed
      */
     @Override
-    public void addData(final String msg) throws UploadFailedException {
+    public void addData(final String msg) throws DBCloseFailedError {
         try {
             String insert = "INSERT INTO `message`(`msg`) VALUES (?)";
             PreparedStatement psst =
@@ -80,6 +84,11 @@ public class MessageController implements
         } catch (SQLException | ClassNotFoundException e) {
             String message = StackTrace.getStackTrace(e);
             new ExceptionBox(message).show();
+        } catch (DBConnectFailedError e) {
+            ExceptionBox box = new ExceptionBox("Error Code: " + DBConnectFailedError.getCode());
+            box.show();
+        } catch (Exception e) {
+            throw new UnknownException();
         } finally {
             DBConnector.close();
         }
@@ -107,17 +116,21 @@ public class MessageController implements
                 message(sendMsg);
                 try {
                     addData(sendMsg);
-                } catch (UploadFailedException ufe) {
-                    ufe.printStackTrace();
+                } catch (DBCloseFailedError e) {
+                    ExceptionBox box = new ExceptionBox("Error Code: " + DBCloseFailedError.getCode());
+                    box.show();
+                } catch (Exception e) {
+                    throw new UnknownException();
                 }
             }
         }
     }
     /**
      * Button Click.
+     * @throws DBCloseFailedError DataBase Object Close Failed
      */
     @FXML
-    private void click() {
+    private void click() throws DBCloseFailedError {
         String msg = textField.getText();
         if (!msg.isEmpty()) {
             clear();
@@ -126,9 +139,11 @@ public class MessageController implements
             message(sendMsg);
             try {
                 addData(sendMsg);
-            } catch (UploadFailedException ufe) {
-                String message = StackTrace.getStackTrace(ufe);
-                new ExceptionBox(message).show();
+            } catch (DBCloseFailedError e) {
+                ExceptionBox box = new ExceptionBox("Error Code: " + DBCloseFailedError.getCode());
+                box.show();
+            } catch (Exception e) {
+                throw new UnknownException();
             }
         }
     }
@@ -137,7 +152,7 @@ public class MessageController implements
      * get data from database.
      */
     @Override
-    public void initData() {
+    public void initData() throws DBCloseFailedError {
         try {
             String select = "SELECT * FROM `MESSAGE`";
             PreparedStatement psst =
@@ -152,6 +167,11 @@ public class MessageController implements
         } catch (SQLException | ClassNotFoundException e) {
             String message = StackTrace.getStackTrace(e);
             new ExceptionBox(message).show();
+        } catch (DBConnectFailedError e) {
+            ExceptionBox box = new ExceptionBox("Error Code: " + DBConnectFailedError.getCode());
+            box.show();
+        } catch (Exception e) {
+            throw new UnknownException();
         } finally {
             DBConnector.close();
         }
@@ -171,9 +191,10 @@ public class MessageController implements
     /**
      * Get Event.
      * @param event Event
+     * @throws DBCloseFailedError DataBase Object Close Failed
      */
     @FXML
-    private void getKey(final KeyEvent event) {
+    private void getKey(final KeyEvent event) throws DBCloseFailedError {
         addData_key(event.getCode(), LoginController.getUserName());
     }
 
@@ -194,10 +215,19 @@ public class MessageController implements
                     new InputStreamReader(
                             SocketConnector.getSocket().getInputStream()));
         } catch (IOException e) {
-            String message = StackTrace.getStackTrace(e);
-            new ExceptionBox(message).show();
+            ExceptionBox box = new ExceptionBox("Error Code: " + ErrorCode.IO.getCode());
+            box.show();
+        } catch (Exception e) {
+            throw new UnknownException();
         }
-        initData();
+        try {
+            initData();
+        } catch (DBCloseFailedError e) {
+            ExceptionBox box = new ExceptionBox("Error Code: " + DBCloseFailedError.getCode());
+            box.show();
+        } catch (Exception e) {
+            throw new UnknownException();
+        }
 
         new Thread(this).start();
     }
@@ -222,7 +252,7 @@ public class MessageController implements
                     if (!text.isEmpty()) {
                         area.appendText(text + "\n");
                     }
-                } catch (NullPointerException e) {
+                } catch (NullPointerException | SocketException e) {
                     area.appendText("\u4f3a\u670d\u5668\u9023\u7dda\u65bc"
                             + "\u6642\u6216\u662f\u4f60\u5df2"
                             + "\u88ab\u5f37\u5236\u65b7"
@@ -235,7 +265,10 @@ public class MessageController implements
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            ExceptionBox box = new ExceptionBox("Error Code: " + ErrorCode.IO.getCode());
+            box.show();
+        } catch (Exception e) {
+            throw new UnknownException();
         }
     }
 }

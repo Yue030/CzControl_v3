@@ -1,8 +1,8 @@
-package com.yue.czcontrol.exception;
+package com.yue.czcontrol.error;
 
 import com.yue.czcontrol.ErrorCode;
 
-public class UploadFailedException extends Exception {
+public class IncompatibleVersionsError extends Exception{
 
     /**
      * serial Version ID.
@@ -10,24 +10,24 @@ public class UploadFailedException extends Exception {
     private static final long serialVersionUID = 1L;
 
     /**
-     * When throw a Unknown Exception.
+     * When the IncompatibleVersions.
      */
-    public UploadFailedException() {
+    public IncompatibleVersionsError() {
         super("Error Code:" + getCode() + ". ");
     }
     /**
-     * When throw a Unknown Exception.
+     * When the IncompatibleVersions.
      * @param msg The message
      */
-    public UploadFailedException(final String msg) {
+    public IncompatibleVersionsError(final String msg) {
         super("Error Code:" + getCode() + ". " + msg);
     }
     /**
-     * When throw a Unknown Exception.
+     * When the IncompatibleVersions.
      * @param msg The message
      * @param cause Cause by
      */
-    public UploadFailedException(final String msg, final Throwable cause) {
+    public IncompatibleVersionsError(final String msg, final Throwable cause) {
         super("Error Code:" + getCode() + ". " + msg, cause);
     }
 
@@ -36,7 +36,7 @@ public class UploadFailedException extends Exception {
      * @return error code
      */
     public static int getCode(){
-        return ErrorCode.UploadFailed.getCode();
+        return ErrorCode.IncompatibleVersions.getCode();
     }
 
 }

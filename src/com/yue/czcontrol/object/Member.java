@@ -34,6 +34,7 @@ public class Member {
      * @param uRank Member Rank
      * @param uActive Member Active
      * @param uHandler Member Handler
+     * @param uActive_all Member active all
      */
     public Member(final String uid, final String uName,
                   final String uRank, final String uActive,

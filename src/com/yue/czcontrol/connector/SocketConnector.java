@@ -2,6 +2,7 @@ package com.yue.czcontrol.connector;
 
 import com.yue.czcontrol.AlertBox;
 import com.yue.czcontrol.ExceptionBox;
+import com.yue.czcontrol.error.SocketConnectFailedError;
 import com.yue.czcontrol.utils.StackTrace;
 
 import java.io.IOException;
@@ -37,17 +38,15 @@ public final class SocketConnector {
 
     /**
      * Connect Socket.
+     *
+     * @throws SocketConnectFailedError If Connect Failed
      * @throws IOException IOException
      */
-    public static void init() throws IOException {
+    public static void init() throws SocketConnectFailedError, IOException {
         try {
            socket = new Socket("27.147.3.116", PORT);
         } catch (ConnectException e) {
-            AlertBox.show("Connect Failed",
-                    "\u9023\u7dda\u903e\u6642",
-                    AlertBox.Type.INFORMATION);
-            socket.close();
-            System.exit(0);
+            throw new SocketConnectFailedError();
         } catch (IOException e) {
             socket.close();
             String message = StackTrace.getStackTrace(e);

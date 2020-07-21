@@ -1,9 +1,9 @@
 package com.yue.czcontrol.window;
 
-import com.yue.czcontrol.AlertBox;
 import com.yue.czcontrol.Main;
 import com.yue.czcontrol.connector.SocketConnector;
-import com.yue.czcontrol.exception.UploadFailedException;
+import com.yue.czcontrol.error.IncompatibleVersionsError;
+import com.yue.czcontrol.error.SocketConnectFailedError;
 import com.yue.czcontrol.utils.SocketSetting;
 import com.yue.czcontrol.utils.VersionProperty;
 import javafx.fxml.FXMLLoader;
@@ -21,13 +21,9 @@ public class SplashController implements VersionProperty, SocketSetting {
      * PrintWriter.
      */
     private final PrintWriter out;
-    /**
-     * BufferedReader.
-     */
-    private final BufferedReader in;
 
     @Override
-    public void addData(final String msg) throws UploadFailedException {
+    public void addData(final String msg) {
     }
 
     /**
@@ -51,7 +47,7 @@ public class SplashController implements VersionProperty, SocketSetting {
 
     /**
      * Get version.
-     * @return "v2-" + version
+     * @return "v3-" + version
      * @see VersionProperty
      */
     @Override
@@ -59,30 +55,31 @@ public class SplashController implements VersionProperty, SocketSetting {
         final int product = 16;
         int version = ((DATE_YEAR * DATE_MD) / (RELEASE_TIME * RELEASE_COUNT))
                 * (product + RELEASE_AM_PM);
-        return "v2-" + version;
+        return "v3-" + version;
     }
 
     /**
      * Constructor.
      * @throws IOException IOException
+     * @throws IncompatibleVersionsError version is incompatible
+     * @throws SocketConnectFailedError connect failed
      */
-    public SplashController() throws IOException {
+    public SplashController() throws IOException, IncompatibleVersionsError, SocketConnectFailedError {
 
         SocketConnector.init();
 
         out = new PrintWriter(SocketConnector.getSocket().getOutputStream());
-        in = new BufferedReader(
+
+        BufferedReader in = new BufferedReader(
                 new InputStreamReader(SocketConnector.getSocket().getInputStream()));
+
+        System.out.println("System Version: " + getVersion());
 
         if (in.readLine() != null) {
             message(getVersion() + " ~[version]");
             String versionOK = in.readLine();
             if (versionOK.equals("shutdown")) {
-                AlertBox.show("Disconnect From Server",
-                        "\u7248\u672c\u904e\u6642\u6216\u4e0d"
-                        + "\u7b26\u5408\u4f3a\u670d\u5668\u898f\u7bc4",
-                        AlertBox.Type.WARNING);
-                System.exit(0);
+                throw new IncompatibleVersionsError("Client is using incompatible version.");
             }
 
             loading();

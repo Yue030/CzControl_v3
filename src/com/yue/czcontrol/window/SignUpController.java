@@ -5,16 +5,16 @@ import com.yue.czcontrol.AlertBox;
 import com.yue.czcontrol.ExceptionBox;
 import com.yue.czcontrol.Main;
 import com.yue.czcontrol.connector.DBConnector;
-import com.yue.czcontrol.exception.UploadFailedException;
+import com.yue.czcontrol.error.DBCloseFailedError;
+import com.yue.czcontrol.error.DBConnectFailedError;
+import com.yue.czcontrol.exception.*;
 import com.yue.czcontrol.utils.StackTrace;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 
-import javax.swing.*;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -56,8 +56,9 @@ public class SignUpController {
      * Detect account is exist or not.
      * @param account Input account
      * @return boolean
+     * @throws DBCloseFailedError DataBase Object Close Failed
      */
-    private boolean isExistAccount(final String account) {
+    private boolean isExistAccount(final String account) throws DBCloseFailedError {
         try {
             //Get Data(SQL Syntax)
             String accountList = "SELECT * FROM admin WHERE ACCOUNT=?";
@@ -78,6 +79,11 @@ public class SignUpController {
             String message = StackTrace.getStackTrace(e);
             ExceptionBox box = new ExceptionBox(message);
             box.show();
+        } catch (DBConnectFailedError e) {
+            ExceptionBox box = new ExceptionBox("Error Code: " + DBConnectFailedError.getCode());
+            box.show();
+        } catch (Exception e) {
+            throw new UnknownException();
         } finally {
             DBConnector.close();
         }
@@ -91,16 +97,19 @@ public class SignUpController {
      * @param account Input account
      * @param password Input password
      * @param confirmPassword Input confirmPassword
-     * @throws UploadFailedException When the data upload failed
+     *
+     * @throws DBCloseFailedError DataBase Object Close Failed
+     * @throws AccountIsExistException Account Exist
+     * @throws PasswordIsDifferentException Password is different
      */
 
     private void register(final String name, final String account,
                           final String password, final String confirmPassword)
-            throws UploadFailedException {
+            throws DBCloseFailedError, AccountIsExistException, PasswordIsDifferentException {
         boolean accountExist = isExistAccount(account);
 
         if (accountExist) {
-            error.setText("\u5e33\u865f\u5df2\u5b58\u5728");
+            throw new AccountIsExistException("Account is exist");
         } else {
             //Detect the password and confirmPassword is equals or not
             if (password.equals(confirmPassword)) {
@@ -131,11 +140,16 @@ public class SignUpController {
                     String message = StackTrace.getStackTrace(e);
                     ExceptionBox box = new ExceptionBox(message);
                     box.show();
+                } catch (DBConnectFailedError e) {
+                    ExceptionBox box = new ExceptionBox("Error Code: " + DBConnectFailedError.getCode());
+                    box.show();
+                } catch (Exception e) {
+                    throw new UnknownException();
                 } finally {
                     DBConnector.close();
                 }
             } else {
-                error.setText("\u5bc6\u78bc\u5fc5\u9808\u76f8\u540c");
+                throw new PasswordIsDifferentException("The password must be same.");
             }
         }
     }
@@ -143,9 +157,11 @@ public class SignUpController {
     /**
      * SignUp.
      * @throws IOException IOException
+     * @throws FormatNotMatchException Input format not match
+     * @throws DataNotCompleteException Data not completed
      */
     @FXML
-    public void signUp() throws IOException {
+    public void signUp() throws IOException, FormatNotMatchException, DataNotCompleteException {
         isOK = false;
         //Get the input data
         String name = nameInput.getText();
@@ -166,19 +182,24 @@ public class SignUpController {
                 //Detect the input data is meets the format
                 try {
                     register(name, account, password, confirmPassword);
-                } catch (UploadFailedException ufe) {
-                    error.setText("\u8a3b\u518a\u5931\u6557");
-
-                    String message = StackTrace.getStackTrace(ufe);
-                    ExceptionBox box = new ExceptionBox(message);
+                } catch (DBCloseFailedError e) {
+                    ExceptionBox box = new ExceptionBox("Error Code: " + DBCloseFailedError.getCode());
                     box.show();
-                } //Register
+                } catch (AccountIsExistException e) {
+                    error.setText("\u5e33\u865f\u5df2\u5b58\u5728");
+                } catch (PasswordIsDifferentException e) {
+                    error.setText("\u5bc6\u78bc\u5fc5\u9808\u76f8\u540c");
+                } catch (Exception e) {
+                    throw new UnknownException();
+                }
             } else {
                 error.setText("\u683c\u5f0f\u4e0d\u7b26\u5408(\u6700\u5c114"
                         + ",\u6700\u591a10\u5b57)");
+                throw new FormatNotMatchException("Format Not match.");
             }
         } else {
             error.setText("\u8cc7\u6599\u4e0d\u5b8c\u6574");
+            throw new DataNotCompleteException("Data Not Completed");
         }
 
         if (isOK) {

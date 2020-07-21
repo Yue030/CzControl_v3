@@ -1,5 +1,6 @@
 package com.yue.czcontrol;
 
+import com.yue.czcontrol.exception.UnknownException;
 import com.yue.czcontrol.utils.StackTrace;
 import javafx.scene.control.TextInputDialog;
 
@@ -31,6 +32,8 @@ public final class TextInput {
             String text = StackTrace.getStackTrace(e);
             ExceptionBox box = new ExceptionBox(text);
             box.show();
+        } catch (Exception e) {
+            throw new UnknownException();
         }
 
         return result;

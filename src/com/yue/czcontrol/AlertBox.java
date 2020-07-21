@@ -2,7 +2,12 @@ package com.yue.czcontrol;
 
 import com.yue.czcontrol.connector.DBConnector;
 import com.yue.czcontrol.connector.SocketConnector;
-import com.yue.czcontrol.utils.StackTrace;
+import com.yue.czcontrol.error.DBCloseFailedError;
+import com.yue.czcontrol.error.DBConnectFailedError;
+import com.yue.czcontrol.window.LoginController;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 
@@ -26,9 +31,17 @@ public final class AlertBox {
          */
         WARNING,
         /**
-         * Confirmation.
+         * Exit.
          */
-        CONFIRMATION
+        EXIT,
+        /**
+         * Logout.
+         */
+        LOGOUT,
+        /**
+         * Error.
+         */
+        ERROR,
     }
 
     /**
@@ -43,28 +56,58 @@ public final class AlertBox {
      * @param type Alert Type
      */
     public static void show(final String title, final String message,
-                            final Type type){
+                            final Type type) {
         if (type == Type.INFORMATION) {
             alert = new Alert(Alert.AlertType.INFORMATION);
             init(alert, title, message);
         } else if (type == Type.WARNING) {
             alert = new Alert(Alert.AlertType.WARNING);
             init(alert, title, message);
-        } else if (type == Type.CONFIRMATION) {
+        } else if (type == Type.EXIT) {
             alert = new Alert(Alert.AlertType.CONFIRMATION);
             init(alert, title, message);
             final ButtonType btn = alert.getResult();
 
             if (btn == ButtonType.OK) {
-                try{
-                    SocketConnector.getSocket().close();
-                    DBConnector.close();
-                } catch (IOException e){
-                    String stack = StackTrace.getStackTrace(e);
-                    new ExceptionBox(stack).show();
+                try {
+                    if(SocketConnector.getSocket() != null)
+                        SocketConnector.getSocket().close();
+                    if(DBConnector.getConnection() != null)
+                        DBConnector.close();
+                } catch (IOException e) {
+                    ExceptionBox box = new ExceptionBox("Error Code: " + ErrorCode.IO.getCode());
+                    box.show();
+                } catch (DBCloseFailedError e) {
+                    ExceptionBox box = new ExceptionBox("Error Code: " + DBCloseFailedError.getCode());
+                    box.show();
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                } catch (DBConnectFailedError e) {
+                    ExceptionBox box = new ExceptionBox("Error Code: " + DBConnectFailedError.getCode());
+                    box.show();
                 }
                 System.exit(0);
             }
+        } else if (type == Type.LOGOUT) {
+            alert = new Alert(Alert.AlertType.CONFIRMATION);
+            init(alert, title, message);
+            final ButtonType btn = alert.getResult();
+
+            if (btn == ButtonType.OK) {
+                LoginController.getUserPreferences().put("user", "null");
+                try{
+                    Parent root = FXMLLoader.load(
+                            AlertBox.class.getResource("window/fxml/Login.fxml"));
+                    Main.getStage().setScene(new Scene(root, 1400, 700));
+                    root.requestFocus();
+                } catch (IOException e){
+                    ExceptionBox box = new ExceptionBox("Error Code: " + ErrorCode.IO.getCode());
+                    box.show();
+                }
+            }
+        } else if (type == Type.ERROR) {
+            alert = new Alert(Alert.AlertType.ERROR);
+            init(alert, title, message);
         }
     }
 
@@ -83,14 +126,51 @@ public final class AlertBox {
         } else if (type == Type.WARNING) {
             alert = new Alert(Alert.AlertType.WARNING);
             init(alert, title, header, message);
-        } else if (type == Type.CONFIRMATION) {
+        } else if (type == Type.EXIT) {
+            alert = new Alert(Alert.AlertType.CONFIRMATION);
+            init(alert, title, message);
+            final ButtonType btn = alert.getResult();
+
+            if (btn == ButtonType.OK) {
+                try {
+                    if(SocketConnector.getSocket() != null)
+                        SocketConnector.getSocket().close();
+                    if(DBConnector.getConnection() != null)
+                        DBConnector.close();
+                } catch (IOException e) {
+                    ExceptionBox box = new ExceptionBox("Error Code: " + ErrorCode.IO.getCode());
+                    box.show();
+                } catch (DBCloseFailedError e) {
+                    ExceptionBox box = new ExceptionBox("Error Code: " + DBCloseFailedError.getCode());
+                    box.show();
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                } catch (DBConnectFailedError e) {
+                    ExceptionBox box = new ExceptionBox("Error Code: " + DBConnectFailedError.getCode());
+                    box.show();
+                }
+                System.exit(0);
+            }
+        } else if (type == Type.LOGOUT) {
             alert = new Alert(Alert.AlertType.CONFIRMATION);
             init(alert, title, header, message);
             final ButtonType btn = alert.getResult();
 
             if (btn == ButtonType.OK) {
-                System.exit(0);
+                LoginController.getUserPreferences().put("user", "null");
+                try{
+                    Parent root = FXMLLoader.load(
+                            AlertBox.class.getResource("window/fxml/Login.fxml"));
+                    Main.getStage().setScene(new Scene(root, 1400, 700));
+                    root.requestFocus();
+                } catch (IOException e){
+                    ExceptionBox box = new ExceptionBox("Error Code: " + ErrorCode.IO.getCode());
+                    box.show();
+                }
             }
+        } else if (type == Type.ERROR) {
+            alert = new Alert(Alert.AlertType.ERROR);
+            init(alert, title, header, message);
         }
     }
 

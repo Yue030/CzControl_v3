@@ -2,6 +2,9 @@ package com.yue.czcontrol.window.features;
 
 import com.yue.czcontrol.ExceptionBox;
 import com.yue.czcontrol.connector.DBConnector;
+import com.yue.czcontrol.error.DBCloseFailedError;
+import com.yue.czcontrol.error.DBConnectFailedError;
+import com.yue.czcontrol.exception.UnknownException;
 import com.yue.czcontrol.object.Member;
 import com.yue.czcontrol.utils.PDFGenerater;
 import com.yue.czcontrol.utils.StackTrace;
@@ -83,14 +86,22 @@ public class MemberListController implements Initializable {
                 new PropertyValueFactory<>("handler"));
 
         table.setEditable(false);
-        table.setItems(getMembers());
+        try {
+            table.setItems(getMembers());
+        } catch (DBCloseFailedError e) {
+            ExceptionBox box = new ExceptionBox("Error Code: " + DBCloseFailedError.getCode());
+            box.show();
+        } catch (Exception e) {
+            throw new UnknownException();
+        }
     }
 
     /**
      * get Members.
      * @return members ObservableList
+     * @throws DBCloseFailedError DataBase Object Close Failed
      */
-    public ObservableList<Member> getMembers() {
+    public ObservableList<Member> getMembers() throws DBCloseFailedError {
         ObservableList<Member> members = FXCollections.observableArrayList();
         setMembers(members);
         return members;
@@ -99,8 +110,9 @@ public class MemberListController implements Initializable {
     /**
      * Set members profile to List.
      * @param members Members List
+     * @throws DBCloseFailedError DataBase Object Close Failed
      */
-    public void setMembers(final ObservableList<Member> members) {
+    public void setMembers(final ObservableList<Member> members) throws DBCloseFailedError {
         try {
             //Get data(SQL Syntax)
             String select = "SELECT * FROM player";
@@ -125,6 +137,11 @@ public class MemberListController implements Initializable {
             String message = StackTrace.getStackTrace(e);
             ExceptionBox box = new ExceptionBox(message);
             box.show();
+        } catch (DBConnectFailedError e) {
+            ExceptionBox box = new ExceptionBox("Error Code: " + DBConnectFailedError.getCode());
+            box.show();
+        } catch (Exception e) {
+            throw new UnknownException();
         } finally {
             DBConnector.close();
         }
@@ -133,9 +150,10 @@ public class MemberListController implements Initializable {
     /**
      * Generate PDF File.
      * {@link PDFGenerater#generate()}
+     * @throws DBCloseFailedError DataBase Object Close Failed
      */
     @FXML
-    public void generatePDF() {
+    public void generatePDF() throws DBCloseFailedError {
         PDFGenerater.generate();
     }
 }

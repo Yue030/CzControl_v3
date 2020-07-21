@@ -23,7 +23,6 @@ public class TimeListener {
         Timer timer = new Timer();
         timer.schedule(new TimeTask(label), DP, DP);
     }
-
 }
 
 class TimeTask extends TimerTask implements TimeProperty {

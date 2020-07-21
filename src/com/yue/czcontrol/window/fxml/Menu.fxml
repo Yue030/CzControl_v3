@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="bp" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.yue.czcontrol.window.MenuController">
+<BorderPane fx:id="bp" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.yue.czcontrol.window.MenuController">
    <left>
       <AnchorPane prefHeight="600.0" prefWidth="173.0" styleClass="mainPane" stylesheets="@../../css/MenuStyle.css" BorderPane.alignment="CENTER">
          <children>
@@ -16,12 +20,12 @@
                         <Font size="30.0" />
                      </font>
                   </Label>
-                  <Label contentDisplay="CENTER" layoutX="29.0" layoutY="90.0" prefHeight="20.0" prefWidth="167.0" text="Code By Yue 2020/6/18" textAlignment="CENTER">
+                  <Label contentDisplay="CENTER" layoutX="29.0" layoutY="90.0" prefHeight="20.0" prefWidth="167.0" text="Code By Yue 2020/7/21" textAlignment="CENTER">
                      <font>
                         <Font size="15.0" />
                      </font>
                   </Label>
-                  <Label layoutX="61.0" layoutY="118.0" text="Version v3-Beta" textAlignment="CENTER">
+                  <Label layoutX="53.0" layoutY="118.0" text="Version: v3-60996" textAlignment="CENTER">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -97,7 +101,7 @@
                   </ImageView>
               </buttons>
             </ButtonBar>
-            <ButtonBar layoutX="13.0" layoutY="516.0" onMouseEntered="#fadeBar" prefHeight="40.0" prefWidth="200.0" styleClass="buttonbar" stylesheets="@../../css/MenuStyle.css">
+            <ButtonBar layoutX="13.0" layoutY="546.0" onMouseEntered="#fadeBar" prefHeight="40.0" prefWidth="200.0" styleClass="buttonbar" stylesheets="@../../css/MenuStyle.css">
               <buttons>
                 <Button fx:id="logoutBtn" mnemonicParsing="false" onAction="#change" prefHeight="23.0" prefWidth="249.0" text="Logout" />
                   <ImageView fitHeight="35.0" fitWidth="38.0" pickOnBounds="true" preserveRatio="true">
@@ -105,6 +109,11 @@
                           <Image url="@../../resource/logout.png" />
                       </image>
                   </ImageView>
+              </buttons>
+            </ButtonBar>
+            <ButtonBar layoutX="13.0" layoutY="502.0" onMouseEntered="#fadeBar" prefHeight="40.0" prefWidth="200.0">
+              <buttons>
+                <Button fx:id="addLeaveBtn" mnemonicParsing="false" onAction="#change" prefHeight="30.0" prefWidth="203.0" text="    - AddLeave" />
               </buttons>
             </ButtonBar>
          </children></AnchorPane>

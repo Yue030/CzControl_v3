@@ -5,8 +5,9 @@ import com.yue.czcontrol.AlertBox;
 import com.yue.czcontrol.ExceptionBox;
 import com.yue.czcontrol.connector.DBConnector;
 import com.yue.czcontrol.connector.SocketConnector;
-import com.yue.czcontrol.exception.NameNotFoundException;
-import com.yue.czcontrol.exception.UploadFailedException;
+import com.yue.czcontrol.error.DBCloseFailedError;
+import com.yue.czcontrol.error.DBConnectFailedError;
+import com.yue.czcontrol.exception.*;
 import com.yue.czcontrol.utils.BoxInit;
 import com.yue.czcontrol.utils.SocketSetting;
 import com.yue.czcontrol.utils.StackTrace;
@@ -47,8 +48,9 @@ public class DeleteMemberController
      * If the member exist, return true. if not, return false.
      * @param id Member id
      * @return boolean
+     * @throws DBCloseFailedError DataBase Object Close Failed
      */
-    private boolean isExist(final String id) {
+    private boolean isExist(final String id) throws DBCloseFailedError {
         try {
             //Get Data(SQL Syntax)
             String select = "SELECT * FROM player WHERE ID=?";
@@ -68,6 +70,9 @@ public class DeleteMemberController
             String message = StackTrace.getStackTrace(e);
             ExceptionBox eb = new ExceptionBox(message);
             eb.show();
+        } catch (DBConnectFailedError e) {
+            ExceptionBox box = new ExceptionBox("Error Code: " + DBConnectFailedError.getCode());
+            box.show();
         } finally {
             DBConnector.close();
         }
@@ -80,8 +85,9 @@ public class DeleteMemberController
      * @param id Member id
      * @param handler Member's handler
      * @return boolean
+     * @throws DBCloseFailedError DataBase Object Close Failed
      */
-    private boolean isHandler(final String id, final String handler) {
+    private boolean isHandler(final String id, final String handler) throws DBCloseFailedError {
         try {
             //Get Data(SQL Syntax)
             String select = "SELECT * FROM player WHERE ID=? AND HANDLER=?";
@@ -103,6 +109,11 @@ public class DeleteMemberController
             String message = StackTrace.getStackTrace(e);
             ExceptionBox eb = new ExceptionBox(message);
             eb.show();
+        } catch (DBConnectFailedError e) {
+            ExceptionBox box = new ExceptionBox("Error Code: " + DBConnectFailedError.getCode());
+            box.show();
+        } catch (Exception e) {
+            throw new UnknownException();
         } finally {
             DBConnector.close();
         }
@@ -113,10 +124,10 @@ public class DeleteMemberController
      * Delete member.
      * @param id member id
      * @param handler member's handler
-     * @throws UploadFailedException When the data upload failed
+     * @throws DBCloseFailedError DataBase Object Close Failed
      */
     private void deleteMember(final String id, final String handler)
-            throws UploadFailedException {
+            throws DBCloseFailedError {
         try {
             boolean isExistOK = isExist(id);
             boolean isHandlerOK = isHandler(id, handler);
@@ -145,23 +156,36 @@ public class DeleteMemberController
                         throw new UploadFailedException(
                                 "Data is Upload failed.");
                     }
-
                 } else {
-                    AlertBox.show("Warning",
-                            "\u4f60\u4e0d\u662f\u6b64\u6210"
-                                    + "\u54e1\u7684\u8ca0\u8cac\u4eba",
-                            AlertBox.Type.WARNING);
+                    throw new HandlerIsWrongException("The user is not equals member handler.");
                 }
             } else {
-                AlertBox.show("Warning",
-                        "\u6c92\u6709\u6b64id\u6210\u54e1",
-                        AlertBox.Type.WARNING);
+                throw new DeleteIDNotFound();
             }
 
         } catch (SQLException | ClassNotFoundException e) {
             String message = StackTrace.getStackTrace(e);
             ExceptionBox eb = new ExceptionBox(message);
             eb.show();
+        } catch (DBCloseFailedError e) {
+            ExceptionBox box = new ExceptionBox("Error Code: " + DBCloseFailedError.getCode());
+            box.show();
+        } catch (DBConnectFailedError e) {
+            ExceptionBox box = new ExceptionBox("Error Code: " + DBConnectFailedError.getCode());
+            box.show();
+        } catch (HandlerIsWrongException e) {
+            AlertBox.show("Warning",
+                    "\u4f60\u4e0d\u662f\u6b64\u6210"
+                            + "\u54e1\u7684\u8ca0\u8cac\u4eba",
+                    AlertBox.Type.WARNING);
+        } catch (DeleteIDNotFound e) {
+            AlertBox.show("Warning",
+                    "\u6c92\u6709\u6b64id\u6210\u54e1",
+                    AlertBox.Type.WARNING);
+        } catch (Exception e) {
+            throw new UnknownException();
+        } finally {
+            DBConnector.close();
         }
     }
 
@@ -184,7 +208,14 @@ public class DeleteMemberController
             ExceptionBox box = new ExceptionBox(message);
             box.show();
         }
-        initBox(box);
+        try {
+            initBox(box);
+        } catch (DBCloseFailedError e) {
+            ExceptionBox box = new ExceptionBox("Error Code: " + DBCloseFailedError.getCode());
+            box.show();
+        } catch (Exception e) {
+            throw new UnknownException();
+        }
     }
 
     /**
@@ -196,10 +227,11 @@ public class DeleteMemberController
             String[] item = box.getValue().split(":");
             String id = getID(item[1]);
             deleteMember(id, LoginController.getUserName());
-        } catch (NameNotFoundException | UploadFailedException nne) {
-            String message = StackTrace.getStackTrace(nne);
-            ExceptionBox box = new ExceptionBox(message);
+        } catch (DBCloseFailedError e) {
+            ExceptionBox box = new ExceptionBox("Error Code: " + DBCloseFailedError.getCode());
             box.show();
+        } catch (Exception e) {
+            throw new UnknownException();
         }
     }
 
@@ -209,7 +241,7 @@ public class DeleteMemberController
      * @param box JComboBox
      */
     @Override
-    public void initBox(final JFXComboBox<String> box) {
+    public void initBox(final JFXComboBox<String> box) throws DBCloseFailedError {
         try {
             String select = "SELECT * FROM PLAYER WHERE HANDLER=?";
             PreparedStatement psst =
@@ -230,6 +262,9 @@ public class DeleteMemberController
             String message = StackTrace.getStackTrace(e);
             ExceptionBox eb = new ExceptionBox(message);
             eb.show();
+        } catch (DBConnectFailedError e) {
+            ExceptionBox b = new ExceptionBox("Error Code: " + DBConnectFailedError.getCode());
+            b.show();
         } finally {
             DBConnector.close();
         }
@@ -240,10 +275,9 @@ public class DeleteMemberController
      *
      * @param name member's name
      * @return String name
-     * @throws NameNotFoundException When the NameNotFound
      */
     @Override
-    public String getID(final String name) throws NameNotFoundException {
+    public String getID(final String name) throws DBCloseFailedError {
         try {
             String select = "SELECT `ID` FROM PLAYER WHERE NAME=?";
 
@@ -263,6 +297,11 @@ public class DeleteMemberController
             String message = StackTrace.getStackTrace(e);
             ExceptionBox eb = new ExceptionBox(message);
             eb.show();
+        } catch (DBConnectFailedError e) {
+            ExceptionBox box = new ExceptionBox("Error Code: " + DBConnectFailedError.getCode());
+            box.show();
+        } catch (Exception e) {
+            throw new UnknownException();
         } finally {
             DBConnector.close();
         }
@@ -273,10 +312,9 @@ public class DeleteMemberController
      * add Data to DataBase.
      *
      * @param msg msg
-     * @throws UploadFailedException upload failed
      */
     @Override
-    public void addData(final String msg) throws UploadFailedException {
+    public void addData(final String msg) {
     }
 
     /**

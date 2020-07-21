@@ -5,6 +5,10 @@ import com.yue.czcontrol.AlertBox;
 import com.yue.czcontrol.ExceptionBox;
 import com.yue.czcontrol.connector.DBConnector;
 import com.yue.czcontrol.connector.SocketConnector;
+import com.yue.czcontrol.error.DBCloseFailedError;
+import com.yue.czcontrol.error.DBConnectFailedError;
+import com.yue.czcontrol.exception.AddDataNotCompletedException;
+import com.yue.czcontrol.exception.UnknownException;
 import com.yue.czcontrol.exception.UploadFailedException;
 import com.yue.czcontrol.utils.SocketSetting;
 import com.yue.czcontrol.utils.StackTrace;
@@ -82,7 +86,12 @@ public class AddMemberController implements
             box.show();
         }
 
-        id.setText("Next Member will be the ID [" + getNextID() + "]");
+        try {
+            id.setText("Next Member will be the ID [" + getNextID() + "]");
+        } catch (DBCloseFailedError e) {
+            ExceptionBox box = new ExceptionBox("Error Code: " + DBCloseFailedError.getCode());
+            box.show();
+        }
 
     }
 
@@ -91,10 +100,9 @@ public class AddMemberController implements
      *
      * @param msg msg
      * @see SocketSetting
-     * @throws UploadFailedException upload failed
      */
     @Override
-    public void addData(final String msg) throws UploadFailedException {
+    public void addData(final String msg) {
 
     }
 
@@ -122,8 +130,9 @@ public class AddMemberController implements
     /**
      * Get Next Id
      * @return id
+     * @throws DBCloseFailedError DataBase Object Close Failed
      */
-    private int getNextID() {
+    private int getNextID() throws DBCloseFailedError {
         int maxID = 0;
         try {
             String select = "SELECT `ID` FROM `PLAYER`";
@@ -138,10 +147,12 @@ public class AddMemberController implements
                     maxID = id;
                 }
             }
-
         } catch (SQLException | ClassNotFoundException e) {
             String message = StackTrace.getStackTrace(e);
             ExceptionBox box = new ExceptionBox(message);
+            box.show();
+        } catch (DBConnectFailedError e) {
+            ExceptionBox box = new ExceptionBox("Error Code: " + DBConnectFailedError.getCode());
             box.show();
         } finally {
             DBConnector.close();
@@ -157,11 +168,12 @@ public class AddMemberController implements
      * @param rank The user's rank
      * @param handler Handler
      * @throws UploadFailedException When the data upload failed
+     * @throws DBCloseFailedError DataBase Object Close Failed
      *
      */
     private void insertData(final String name,
                             final String rank, final String handler)
-            throws UploadFailedException {
+            throws UploadFailedException, DBCloseFailedError {
         try {
             //Add data(SQL Syntax)
             String insert =
@@ -196,6 +208,12 @@ public class AddMemberController implements
             String message = StackTrace.getStackTrace(e);
             ExceptionBox box = new ExceptionBox(message);
             box.show();
+        } catch (DBCloseFailedError e) {
+            ExceptionBox box = new ExceptionBox("Error Code: " + DBCloseFailedError.getCode());
+            box.show();
+        } catch (DBConnectFailedError e) {
+            ExceptionBox box = new ExceptionBox("Error Code: " + DBConnectFailedError.getCode());
+            box.show();
         } finally {
             DBConnector.close();
         }
@@ -209,10 +227,12 @@ public class AddMemberController implements
      * @param active The user's active
      * @param handler Handler
      * @throws UploadFailedException When the data upload failed
+     * @throws DBCloseFailedError DataBase Object Close Failed
+     *
      */
     private void insertData(final String name, final String rank,
                             final String active, final String handler)
-            throws UploadFailedException {
+            throws UploadFailedException, DBCloseFailedError {
         try {
             //Add data(SQL Syntax)
             String insert =
@@ -249,6 +269,12 @@ public class AddMemberController implements
             String message = StackTrace.getStackTrace(e);
             ExceptionBox box = new ExceptionBox(message);
             box.show();
+        } catch (DBCloseFailedError e) {
+            ExceptionBox box = new ExceptionBox("Error Code: " + DBCloseFailedError.getCode());
+            box.show();
+        } catch (DBConnectFailedError e) {
+            ExceptionBox box = new ExceptionBox("Error Code: " + DBConnectFailedError.getCode());
+            box.show();
         } finally {
             DBConnector.close();
         }
@@ -256,40 +282,53 @@ public class AddMemberController implements
 
     /**
      * When action button.
+     * @throws DBCloseFailedError DataBase Object Close Failed
      */
     @FXML
-    public void action() {
+    public void action() throws DBCloseFailedError {
         String name = nameInput.getText();
         String rank = rankInput.getText();
         String active = activeInput.getText().isEmpty()
                 ? null : activeInput.getText();
         //Detect name and rank is empty. if not, continue method
-        if (!name.isEmpty() && !rank.isEmpty()) {
-            //Detect active is empty or not
-            if (active == null) {
-                try {
-                    insertData(name, rank, LoginController.getUserName());
-                } catch (UploadFailedException nne) {
-                    String message = StackTrace.getStackTrace(nne);
-                    ExceptionBox box = new ExceptionBox(message);
-                    box.show();
+        try {
+            if (!name.isEmpty() && !rank.isEmpty()) {
+                //Detect active is empty or not
+                if (active == null) {
+                    try {
+                        insertData(name, rank, LoginController.getUserName());
+                    } catch (UploadFailedException nne) {
+                        String message = StackTrace.getStackTrace(nne);
+                        ExceptionBox box = new ExceptionBox(message);
+                        box.show();
+                    } catch (DBCloseFailedError e){
+                        ExceptionBox box = new ExceptionBox("Error Code: " + DBCloseFailedError.getCode());
+                        box.show();
+                    }
+                } else {
+                    try {
+                        insertData(name, rank, active,
+                                LoginController.getUserName());
+                    } catch (UploadFailedException nne) {
+                        String message = StackTrace.getStackTrace(nne);
+                        ExceptionBox box = new ExceptionBox(message);
+                        box.show();
+                    } catch (DBCloseFailedError e) {
+                        ExceptionBox box = new ExceptionBox("Error Code: " + DBCloseFailedError.getCode());
+                        box.show();
+                    } finally {
+                        DBConnector.close();
+                    }
                 }
             } else {
-                try {
-                    insertData(name, rank, active,
-                            LoginController.getUserName());
-                } catch (UploadFailedException nne) {
-                    String message = StackTrace.getStackTrace(nne);
-                    ExceptionBox box = new ExceptionBox(message);
-                    box.show();
-                } finally {
-                    DBConnector.close();
-                }
+                throw new AddDataNotCompletedException("Name or Rank is empty.");
             }
-        } else {
+        } catch (AddDataNotCompletedException e) {
             AlertBox.show("Warning",
                     "\u8cc7\u6599\u4e0d\u5b8c\u6574",
                     AlertBox.Type.WARNING);
+        } catch (Exception e) {
+            throw new UnknownException();
         }
     }
 }

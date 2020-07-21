@@ -1,12 +1,6 @@
-/**
- * CzControl Main Package.
- * @author Yue
- * @since 2020/6/25
- * @version 1
- */
 package com.yue.czcontrol;
 
-import com.yue.czcontrol.utils.StackTrace;
+import com.yue.czcontrol.exception.UnknownException;
 import com.yue.czcontrol.window.ExceptionController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -14,13 +8,12 @@ import javafx.scene.control.Alert;
 
 import java.io.IOException;
 
-public class ExceptionBox {
+public final class ExceptionBox {
 
     /**
      * Alert.
      */
     private final Alert alert = new Alert(Alert.AlertType.ERROR);
-
     /**
      * Constructor.
      * @param error Error message
@@ -30,7 +23,7 @@ public class ExceptionBox {
     }
 
     /**
-     *
+     * show box
      */
     public void show() {
         try {
@@ -42,9 +35,10 @@ public class ExceptionBox {
             alert.getDialogPane().setContent(root);
             alert.showAndWait();
         } catch (IOException e) {
-            String message = StackTrace.getStackTrace(e);
-            ExceptionBox box = new ExceptionBox(message);
+            ExceptionBox box = new ExceptionBox("Error Code: " + ErrorCode.IO.getCode());
             box.show();
+        } catch (Exception e) {
+            throw new UnknownException();
         }
     }
 }

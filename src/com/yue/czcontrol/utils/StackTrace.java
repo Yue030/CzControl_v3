@@ -6,6 +6,7 @@ import java.io.StringWriter;
 public final class StackTrace {
     private StackTrace() {
     }
+
     /**
      * Throwable to String.
      * @param throwable Throwable

@@ -1,6 +1,8 @@
 package com.yue.czcontrol.window;
+import com.yue.czcontrol.AlertBox;
+import com.yue.czcontrol.ErrorCode;
 import com.yue.czcontrol.ExceptionBox;
-import com.yue.czcontrol.utils.StackTrace;
+import com.yue.czcontrol.exception.UnknownException;
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -70,9 +72,14 @@ public class MenuController implements Initializable {
      */
     @FXML
     private Button messageBtn;
+    /**
+     * Add Leave Btn.
+     */
+    @FXML
+    private Button addLeaveBtn;
 
     /**
-     * If the ButtomBar is set effect, it will be in the list.
+     * If the ButtonBar is set effect, it will be in the list.
      */
     private final List<ButtonBar> barList = new ArrayList<>();
 
@@ -144,10 +151,12 @@ public class MenuController implements Initializable {
             changeTo("EditMember");
         } else if (event.getSource() == leaveBtn) {
             changeTo("Leave");
-        } else if (event.getSource() == logoutBtn) {
-            changeTo("Logout");
         } else if (event.getSource() == messageBtn) {
             changeTo("Message");
+        } else if(event.getSource() == addLeaveBtn) {
+            changeTo("AddLeave");
+        } else if (event.getSource() == logoutBtn) {
+            AlertBox.show("Logout", "Are you sure to logout?", AlertBox.Type.LOGOUT);
         }
     }
 
@@ -162,12 +171,12 @@ public class MenuController implements Initializable {
                             getResource("fxml/features/" + fileName + ".fxml"));
             bp.setCenter(root);
         } catch (IOException e) {
-            String message = StackTrace.getStackTrace(e);
-            ExceptionBox box = new ExceptionBox(message);
+            ExceptionBox box = new ExceptionBox("Error Code: " + ErrorCode.IO.getCode());
             box.show();
+        } catch (Exception e) {
+            throw new UnknownException();
         }
     }
-
 
     /**
      * Called to initialize a controller after its root element has been
@@ -184,9 +193,10 @@ public class MenuController implements Initializable {
                     getClass().getResource("fxml/features/Home.fxml"));
             bp.setCenter(root);
         } catch (IOException e) {
-            String message = StackTrace.getStackTrace(e);
-            ExceptionBox box = new ExceptionBox(message);
+            ExceptionBox box = new ExceptionBox("Error Code: " + ErrorCode.IO.getCode());
             box.show();
+        } catch (Exception e) {
+            throw new UnknownException();
         }
     }
 }

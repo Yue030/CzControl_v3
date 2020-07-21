@@ -8,15 +8,15 @@ public interface VersionProperty {
 	/**
 	 * Release Mouth and Day.
 	 */
-	int DATE_MD = 616;
+	int DATE_MD = 721;
 	/**
 	 * Release on AM(3) or PM(7).
 	 */
-	int RELEASE_AM_PM = 3;
+	int RELEASE_AM_PM = 7;
 	/**
 	 * Release Time.
 	 */
-	int RELEASE_TIME = 506;
+	int RELEASE_TIME = 549;
 	/**
 	 * Release count of day.
 	 */
@@ -24,7 +24,7 @@ public interface VersionProperty {
 	/**
 	 * Release Date.
 	 */
-	String RELEASE_DATE = "2020/06/16";
+	String RELEASE_DATE = "2020/7/21";//2020/06/16
 	/**
 	 * get Version.
 	 * @return String

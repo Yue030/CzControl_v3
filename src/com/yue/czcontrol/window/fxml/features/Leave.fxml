@@ -1,15 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="775.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <Label layoutX="356.0" layoutY="190.0" text="Leave">
-         <font>
-            <Font size="30.0" />
-         </font>
-      </Label>
-   </children>
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="775.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.yue.czcontrol.window.features.LeaveController">
+    <children>
+        <Label layoutX="300.0" layoutY="14.0" text="Leave">
+            <font>
+                <Font size="30.0" />
+            </font>
+        </Label>
+        <TableView fx:id="table" layoutX="7.0" layoutY="62.0" prefHeight="534.0" prefWidth="762.0" stylesheets="@../../../css/LeaveStyle.css">
+            <columns>
+                <TableColumn fx:id="idColumn" prefWidth="150.0" text="ID" />
+                <TableColumn fx:id="nameColumn" prefWidth="150.0" text="Name" />
+                <TableColumn fx:id="timeColumn" prefWidth="150.0" text="Time" />
+                <TableColumn fx:id="reasonColumn" prefWidth="150.0" text="Reason" />
+                <TableColumn fx:id="handlerColumn" prefWidth="150.0" text="Handler" />
+            </columns>
+        </TableView>
+    </children>
 </AnchorPane>

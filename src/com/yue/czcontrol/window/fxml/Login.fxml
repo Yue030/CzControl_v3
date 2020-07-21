@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXCheckBox?>
 <?import com.jfoenix.controls.JFXPasswordField?>
 <?import com.jfoenix.controls.JFXTextField?>
@@ -40,6 +41,7 @@
                   <Font size="20.0" />
                </font>
             </JFXCheckBox>
+            <JFXButton onAction="#forgetPassword" layoutX="14.0" layoutY="16.0" text="Forget Password" />
          </children></Pane>
       <Pane layoutX="7.0" prefHeight="723.0" prefWidth="716.0" styleClass="subPan" stylesheets="@../../css/SignInUpStyle.css">
          <children>

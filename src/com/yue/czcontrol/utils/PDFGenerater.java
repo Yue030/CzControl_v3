@@ -6,6 +6,9 @@ import com.yue.czcontrol.AlertBox;
 import com.yue.czcontrol.ExceptionBox;
 import com.yue.czcontrol.connector.DBConnector;
 import com.yue.czcontrol.connector.SocketConnector;
+import com.yue.czcontrol.error.DBCloseFailedError;
+import com.yue.czcontrol.error.DBConnectFailedError;
+import com.yue.czcontrol.exception.UnknownException;
 import com.yue.czcontrol.exception.UploadFailedException;
 import com.yue.czcontrol.window.LoginController;
 
@@ -42,8 +45,9 @@ public final class PDFGenerater implements SocketSetting, TimeProperty {
 
     /**
      * Generate PDF.
+     * @throws DBCloseFailedError DataBase Object Close Failed
      */
-    public static void generate() {
+    public static void generate() throws DBCloseFailedError {
          try {
             String select = "SELECT * From PLAYER";
             PreparedStatement psst =
@@ -114,9 +118,14 @@ public final class PDFGenerater implements SocketSetting, TimeProperty {
                             + "PDF\u6a94 ~[console]");
         } catch (DocumentException | SQLException
                  | IOException | ClassNotFoundException e) {
-            String message = StackTrace.getStackTrace(e);
-            ExceptionBox box = new ExceptionBox(message);
-            box.show();
+             String message = StackTrace.getStackTrace(e);
+             ExceptionBox box = new ExceptionBox(message);
+             box.show();
+        } catch (DBConnectFailedError e) {
+             ExceptionBox box = new ExceptionBox("Error Code: " + DBConnectFailedError.getCode());
+             box.show();
+        } catch (Exception e) {
+             throw new UnknownException();
         } finally {
             DBConnector.close();
         }
@@ -207,6 +216,8 @@ class TableHeader extends PdfPageEventHelper {
             table.writeSelectedRows(0, -1, 34, 830, writer.getDirectContent());
         } catch (DocumentException de) {
             throw new ExceptionConverter(de);
+        } catch (Exception e) {
+            throw new UnknownException();
         }
     }
 

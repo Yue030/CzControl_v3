@@ -1,8 +1,9 @@
 package com.yue.czcontrol.exception;
 
 import com.yue.czcontrol.ErrorCode;
+import com.yue.czcontrol.ExceptionBox;
 
-public class UploadFailedException extends Exception {
+public class UnknownException extends RuntimeException{
 
     /**
      * serial Version ID.
@@ -12,23 +13,29 @@ public class UploadFailedException extends Exception {
     /**
      * When throw a Unknown Exception.
      */
-    public UploadFailedException() {
+    public UnknownException() {
         super("Error Code:" + getCode() + ". ");
+        ExceptionBox box = new ExceptionBox("Error Code: " + getCode());
+        box.show();
     }
     /**
      * When throw a Unknown Exception.
      * @param msg The message
      */
-    public UploadFailedException(final String msg) {
+    public UnknownException(final String msg) {
         super("Error Code:" + getCode() + ". " + msg);
+        ExceptionBox box = new ExceptionBox("Error Code: " + getCode());
+        box.show();
     }
     /**
      * When throw a Unknown Exception.
      * @param msg The message
      * @param cause Cause by
      */
-    public UploadFailedException(final String msg, final Throwable cause) {
+    public UnknownException(final String msg, final Throwable cause) {
         super("Error Code:" + getCode() + ". " + msg, cause);
+        ExceptionBox box = new ExceptionBox("Error Code: " + getCode());
+        box.show();
     }
 
     /**
@@ -36,7 +43,7 @@ public class UploadFailedException extends Exception {
      * @return error code
      */
     public static int getCode(){
-        return ErrorCode.UploadFailed.getCode();
+        return ErrorCode.Unknown.getCode();
     }
 
 }
